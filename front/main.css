@@ -1,0 +1,48 @@
+#toolbar {
+    position: absolute; 
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 100px;
+    background-color: #ccc;
+    text-align: center;
+    line-height: 40px;
+}
+#canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - 100px);
+    background-color: #ccc;
+}
+.color-button {
+    width: calc(90vw / 16);
+    height: 30px;
+    padding-top: 10px;
+    border-radius: 5px;
+    border: 1px solid #888;
+    display: inline-block;
+    margin-left: 5px;
+    cursor: pointer;
+}
+*:disabled {
+    opacity: 50%;
+    cursor: not-allowed;
+}
+.color-button.active {
+    border: 5px solid #888;
+}
+#timer {
+    display: inline-block;
+    width: 100px;
+    height: 25px;
+    border: 1px solid black;
+    border-radius: 5px;
+    font-family: arial;
+}
+
+canvas {
+    image-rendering: pixelated;
+    background-color: white;
+}
