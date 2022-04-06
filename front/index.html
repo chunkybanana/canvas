@@ -4,14 +4,32 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Canvas</title>
     <link rel="stylesheet" href="main.css">
 </head>
 <body>
+    <div id="info" onclick="showModal(true)">?</div>
     <div id="canvas-container"></div>
     <div id="toolbar">
         <div id="buttons"></div>
         <div id="timer"></div>
+    </div>
+    <div id="info-modal" onclick="if(event.target === this) showModal(false)">
+        <div id="info-modal-box">
+            <div id="close-modal" onclick="showModal(false)">&times;</div>
+            <div id="modal-content">
+                <br>Canvas is a game where you draw pixels on a canvas and create things. <br>
+
+                Please:
+                <ul>
+                    <li>Be nice. Don't cause chaos or destroy things people have obviously worked hard on.</li>
+                    <li>Drawings should be SFW. Kids use this.</li>
+                    <li>Don't hack.</li>
+                </ul>
+
+                Code is on <a target="_blank" href="https://github.com/chunkybanana/canvas">Github</a>.
+            </div>
+        </div>
     </div>
     <script src="canvas.js"></script>
     <script src="../data-utils.js"></script>

@@ -43,6 +43,10 @@ let startCountdown = () => {
     setTimeout(startCountdown, 20);
 }
 
+let showModal = (bool) => {
+    document.getElementById("info-modal").style.display = bool ? "block" : "none";
+}
+
 canvas.addEventListener('pointerdown', () => {
     if (Date.now() - lastClick > 5000 && canvas.x < 256 && canvas.y > 0 && canvas.y < 256 && canvas.x > 0) {
         lastClick = Date.now();
