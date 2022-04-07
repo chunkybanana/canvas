@@ -72,8 +72,10 @@ function drawRect(x, y, color) {
 }
 
 function render(data) {
-    for (let i = 0; i < data.length; i++) {
-        drawRect(i & 0x7F, i >> 7 & 0x7F, COLORS[data[i]])
+    for (let y in data) {
+        for(let x in data[y]) {
+            drawRect(x, y, COLORS[data[y][x]]);
+        }
     }
 }
 
@@ -90,7 +92,7 @@ var start_ws = () => {
         console.log('got me some data', message.data);
         if(!recievedData) {
             recievedData = true;
-            render(decodeData(message.data).flat());
+            render(decodeData(message.data));
             return;
         }
         message.data.text().then((data) => {
