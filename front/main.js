@@ -7,7 +7,7 @@ ctx.imageSmoothingEnabled = false;
 const buttons = document.getElementById("buttons");
 const timer = document.getElementById("timer");
 
-const ws = new WebSocket("ws://localhost:8010");
+const ws = new WebSocket("ws://localhost:8080");
 
 let lastClick = 0;
 let drawColor = 'black';
@@ -31,7 +31,7 @@ for (let color of COLORS) {
 buttons.childNodes[14].click();
 let startCountdown = () => {
     let time = Date.now() - lastClick;
-    if (time > 5000) {
+    if (time > 2500) {
         timer.textContent = "";
         for(let button of buttons.childNodes) {
             button.disabled = false;
@@ -39,7 +39,7 @@ let startCountdown = () => {
         canvas.disabled = false;
         return;
     }
-    timer.textContent = ((5000 - time) / 1000).toFixed(2);
+    timer.textContent = ((2500 - time) / 1000).toFixed(2);
     setTimeout(startCountdown, 20);
 }
 
@@ -48,7 +48,7 @@ let showModal = (bool) => {
 }
 
 canvas.addEventListener('pointerdown', () => {
-    if (Date.now() - lastClick > 5000 && canvas.x < 256 && canvas.y > 0 && canvas.y < 256 && canvas.x > 0) {
+    if (Date.now() - lastClick > 2500 && canvas.x < 256 && canvas.y > 0 && canvas.y < 256 && canvas.x > 0) {
         lastClick = Date.now();
         var x = Math.floor(canvas.x), y = Math.floor(canvas.y);
         startCountdown();

@@ -1,30 +1,75 @@
 var r_ws = require("ws");
-var {formatData, decodeMessage} = require("./data-utils");
+const { program } = require('commander');
+const fs = require('fs')
+var {formatData, decodeMessage} = require("./front/data-utils");
 
-var ws = new r_ws.Server({port: 8010});
+let port = 8080;
+let log, logs = [], data;
 
-const data = Array(128).fill(0).map(() => Array(128).fill(15));
+
+
+program
+    .option('-l, --log <file>', 'log file')
+    .option('-b, --backup <file>', 'backup the canvas state to a file every minute')
+    .option('-L, --load <file>', 'load the canvas state from a file')
+    .option('-p, --port <port>','Websocket port', 8080)
+    .option('-s, --stdout', 'log to stdout')
+    .option('-e, --stderr', 'log to stderr')
+    .action((options) => {
+        if (options.backup) {
+            setInterval(() => {
+                fs.writeFileSync(options.backup, JSON.stringify(data));
+            }, 60000)
+        }
+        if (options.load) {
+            data = JSON.parse(fs.readFileSync(options.load));
+        }
+        if (options.stdout) {
+            log = console.log;
+        } else if (options.stderr) {
+            log = console.error;
+        } else if (options.log) {
+            log = options.log;
+            // If it exists, clear it. If it doesn't exist, create it.
+            fs.writeFileSync(log, "");
+        }
+        if (options.port) port = options.port;
+    }) 
+program.parse();
+
+var ws = new r_ws.Server({port: port});
+
+data ||= Array(128).fill(0).map(() => Array(128).fill(15)) 
 
 let conns = [];
 
 ws.on('connection', (conn) => {
     let lastMessage = 0;
     conn.send(formatData(data.flat()));
-    console.log("New connection");
     conns.push(conn);
     conn.on('message', (message) => {
-        if(Date.now() - lastMessage > 2500) {
+        if (Date.now() - lastMessage > 2500) {
             lastMessage = Date.now();
             const {x, y, color} = decodeMessage(parseInt(message));
-            console.log('got me some data', x, y, color, message.toString());
+            if (log) {
+                if(typeof log == "function") {
+                    log(`${x} ${y} ${color} ${Date.now()} `)
+                } else {
+                    logs.push(`${x} ${y} ${color} ${Date.now()} `);
+                    console.log(logs)
+                    if(logs.length > 100) {
+                        fs.appendFileSync(log, logs.join("\n") + '\n');
+                        logs = [];
+                    }
+                }
+            }
             data[x][y] = color;
-            for(let _conn of conns) {
-                if(_conn != conn) _conn.send(message);
+            for (let _conn of conns) {
+                if (_conn != conn) _conn.send(message);
             }
         }
     })
     conn.on('close', () => {
         conns.splice(conns.indexOf(conn), 1);
-        console.log('connection closed');
     })
 })
