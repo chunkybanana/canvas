@@ -7,7 +7,7 @@ ctx.imageSmoothingEnabled = false;
 const buttons = document.getElementById("buttons");
 const timer = document.getElementById("timer");
 
-const ws = new WebSocket("ws://localhost:8010");
+var ws;
 
 let lastClick = 0;
 let drawColor = 'black';
@@ -31,7 +31,7 @@ for (let color of COLORS) {
 buttons.childNodes[14].click();
 let startCountdown = () => {
     let time = Date.now() - lastClick;
-    if (time > 5000) {
+    if (time > 2500) {
         timer.textContent = "";
         for(let button of buttons.childNodes) {
             button.disabled = false;
@@ -39,12 +39,16 @@ let startCountdown = () => {
         canvas.disabled = false;
         return;
     }
-    timer.textContent = ((5000 - time) / 1000).toFixed(2);
+    timer.textContent = ((2500 - time) / 1000).toFixed(2);
     setTimeout(startCountdown, 20);
 }
 
+let showModal = (bool) => {
+    document.getElementById("info-modal").style.display = bool ? "block" : "none";
+}
+
 canvas.addEventListener('pointerdown', () => {
-    if (Date.now() - lastClick > 5000 && canvas.x < 256 && canvas.y > 0 && canvas.y < 256 && canvas.x > 0) {
+    if (navigator.onLine && ws.readyState == 1 && Date.now() - lastClick > 2500 && canvas.x < 256 && canvas.y > 0 && canvas.y < 256 && canvas.x > 0) {
         lastClick = Date.now();
         var x = Math.floor(canvas.x), y = Math.floor(canvas.y);
         startCountdown();
@@ -68,28 +72,38 @@ function render(data) {
     }
 }
 
-ws.onopen = () => {
-    recievedData = false;
+var start_ws = () => {
+    ws = new WebSocket("wss://canvas.rto.run/ws");
+
+    ws.onopen = () => {
+        recievedData = false;
+    }
+
+    ws.onmessage = message => {
+        console.log('got me some data', message.data);
+        if(!recievedData) {
+            recievedData = true;
+            decodeBlob(message.data, decodeData).then(data => {
+                render(data)
+            });
+            return;
+        }
+        /*const reader = new FileReader();
+        reader.onload = () => {
+            var decoded = decodeMessage(parseInt(reader.result));
+            drawRect(decoded.x, decoded.y, decoded.color);
+        }
+        reader.readAsText(message.data);*/
+        message.data.text().then((data) => {
+            var decoded = decodeMessage(parseInt(data));
+            console.log(decoded, data);
+            drawRect(decoded.x, decoded.y, COLORS[decoded.color]);
+        })
+    }
+
+    ws.onclose = () => {
+        setTimeout(start_ws, 2000);
+    }
 }
 
-ws.onmessage = message => {
-    console.log('got me some data', message.data);
-    if(!recievedData) {
-        recievedData = true;
-        decodeBlob(message.data, decodeData).then(data => {
-            render(data)
-        });
-        return;
-    }
-    /*const reader = new FileReader();
-    reader.onload = () => {
-        var decoded = decodeMessage(parseInt(reader.result));
-        drawRect(decoded.x, decoded.y, decoded.color);
-    }
-    reader.readAsText(message.data);*/
-    message.data.text().then((data) => {
-        var decoded = decodeMessage(parseInt(data));
-        console.log(decoded, data);
-        drawRect(decoded.x, decoded.y, COLORS[decoded.color]);
-    })
-}
+start_ws()
