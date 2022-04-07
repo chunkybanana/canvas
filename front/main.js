@@ -7,13 +7,14 @@ ctx.imageSmoothingEnabled = false;
 const buttons = document.getElementById("buttons");
 const timer = document.getElementById("timer");
 
-const ws = new WebSocket("ws://localhost:8080");
+// Don't worry, ws is initialized later
+var ws;
 
 let lastClick = 0;
 let drawColor = 'black';
 
 let recievedData;
-
+// Dynamic button generation go brr
 for (let color of COLORS) {
     const button = document.createElement("button");
     button.classList.add('color-button')
@@ -48,7 +49,11 @@ let showModal = (bool) => {
 }
 
 canvas.addEventListener('pointerdown', () => {
-    if (Date.now() - lastClick > 2500 && canvas.x < 256 && canvas.y > 0 && canvas.y < 256 && canvas.x > 0) {
+    if (
+        navigator.onLine && ws.readyState == 1 
+        && Date.now() - lastClick > 2500 
+        && canvas.x < 256 && canvas.y > 0 && canvas.y < 256 && canvas.x > 0
+    ) {
         lastClick = Date.now();
         var x = Math.floor(canvas.x), y = Math.floor(canvas.y);
         startCountdown();
@@ -72,28 +77,33 @@ function render(data) {
     }
 }
 
-ws.onopen = () => {
-    recievedData = false;
+var start_ws = () => {
+    // Change to localhost:<PORT> for local testing
+    ws = new WebSocket("wss://canvas.rto.run/ws");
+
+    ws.onopen = () => {
+        recievedData = false;
+    }
+
+    ws.onmessage = message => {
+        console.log('got me some data', message.data);
+        if(!recievedData) {
+            recievedData = true;
+            decodeBlob(message.data, decodeData).then(data => {
+                render(data)
+            });
+            return;
+        }
+        message.data.text().then((data) => {
+            var decoded = decodeMessage(parseInt(data));
+            console.log(decoded, data);
+            drawRect(decoded.x, decoded.y, COLORS[decoded.color]);
+        })
+    }
+
+    ws.onclose = () => {
+        setTimeout(start_ws, 2000);
+    }
 }
 
-ws.onmessage = message => {
-    console.log('got me some data', message.data);
-    if(!recievedData) {
-        recievedData = true;
-        decodeBlob(message.data, decodeData).then(data => {
-            render(data)
-        });
-        return;
-    }
-    /*const reader = new FileReader();
-    reader.onload = () => {
-        var decoded = decodeMessage(parseInt(reader.result));
-        drawRect(decoded.x, decoded.y, decoded.color);
-    }
-    reader.readAsText(message.data);*/
-    message.data.text().then((data) => {
-        var decoded = decodeMessage(parseInt(data));
-        console.log(decoded, data);
-        drawRect(decoded.x, decoded.y, COLORS[decoded.color]);
-    })
-}
+start_ws()

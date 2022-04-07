@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "commander": "^9.1.0",
-    "ws": "^1.0.1"
+    "ws": "^8.5.0"
   },
   "author": "",
   "license": "ISC",
