@@ -45,7 +45,7 @@ let conns = [];
 
 ws.on('connection', (conn) => {
     let lastMessage = 0;
-    conn.send(formatData(data.flat()));
+    conn.send(formatData(data));
     conns.push(conn);
     conn.on('message', (message) => {
         if (Date.now() - lastMessage > 2500) {

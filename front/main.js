@@ -78,8 +78,9 @@ function render(data) {
 }
 
 var start_ws = () => {
-    // Change to localhost:<PORT> for local testing
-    ws = new WebSocket("wss://canvas.rto.run/ws");
+    // Change to ws://localhost:<PORT> for local testing
+    //ws = new WebSocket("ws://canvas.rto.run/ws");
+    ws = new WebSocket("ws://localhost:8080");
 
     ws.onopen = () => {
         recievedData = false;
@@ -89,9 +90,7 @@ var start_ws = () => {
         console.log('got me some data', message.data);
         if(!recievedData) {
             recievedData = true;
-            decodeBlob(message.data, decodeData).then(data => {
-                render(data)
-            });
+            render(decodeData(message.data).flat());
             return;
         }
         message.data.text().then((data) => {
