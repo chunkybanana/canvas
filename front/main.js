@@ -73,7 +73,7 @@ function drawRect(x, y, color) {
 
 function render(data) {
     for (let i = 0; i < data.length; i++) {
-        drawRect(i >> 7 & 0x7F, i & 0x7F, COLORS[data[i]])
+        drawRect(i & 0x7F, i >> 7 & 0x7F, COLORS[data[i]])
     }
 }
 

@@ -63,7 +63,7 @@ ws.on('connection', (conn) => {
                     }
                 }
             }
-            data[x][y] = color;
+            data[y][x] = color;
             for (let _conn of conns) {
                 if (_conn != conn) _conn.send(message);
             }
