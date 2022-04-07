@@ -7,13 +7,14 @@ ctx.imageSmoothingEnabled = false;
 const buttons = document.getElementById("buttons");
 const timer = document.getElementById("timer");
 
+// Don't worry, ws is initialized later
 var ws;
 
 let lastClick = 0;
 let drawColor = 'black';
 
 let recievedData;
-
+// Dynamic button generation go brr
 for (let color of COLORS) {
     const button = document.createElement("button");
     button.classList.add('color-button')
@@ -48,7 +49,11 @@ let showModal = (bool) => {
 }
 
 canvas.addEventListener('pointerdown', () => {
-    if (navigator.onLine && ws.readyState == 1 && Date.now() - lastClick > 2500 && canvas.x < 256 && canvas.y > 0 && canvas.y < 256 && canvas.x > 0) {
+    if (
+        navigator.onLine && ws.readyState == 1 
+        && Date.now() - lastClick > 2500 
+        && canvas.x < 256 && canvas.y > 0 && canvas.y < 256 && canvas.x > 0
+    ) {
         lastClick = Date.now();
         var x = Math.floor(canvas.x), y = Math.floor(canvas.y);
         startCountdown();
@@ -73,6 +78,7 @@ function render(data) {
 }
 
 var start_ws = () => {
+    // Change to localhost:<PORT> for local testing
     ws = new WebSocket("wss://canvas.rto.run/ws");
 
     ws.onopen = () => {
@@ -88,12 +94,6 @@ var start_ws = () => {
             });
             return;
         }
-        /*const reader = new FileReader();
-        reader.onload = () => {
-            var decoded = decodeMessage(parseInt(reader.result));
-            drawRect(decoded.x, decoded.y, decoded.color);
-        }
-        reader.readAsText(message.data);*/
         message.data.text().then((data) => {
             var decoded = decodeMessage(parseInt(data));
             console.log(decoded, data);

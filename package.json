@@ -1,5 +1,20 @@
 {
+  "name": "canvas",
+  "version": "1.0.0",
+  "description": "A canvas game",
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chunkybanana/canvas.git"
+  },
   "dependencies": {
+    "commander": "^9.1.0",
     "ws": "^8.5.0"
-  }
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chunkybanana/canvas/issues"
+  },
+  "homepage": "https://github.com/chunkybanana/canvas#readme"
 }
