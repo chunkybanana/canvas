@@ -8,15 +8,15 @@
     <link rel="stylesheet" href="main.css">
 </head>
 <body>
-    <div id="info" onclick="showModal(true)">?</div>
+    <div id="info" onclick="showModal('info-modal', true)">?</div>
     <div id="canvas-container"></div>
     <div id="toolbar">
         <div id="buttons"></div>
         <div id="timer"></div>
     </div>
-    <div id="info-modal" onclick="if(event.target === this) showModal(false)">
-        <div id="info-modal-box">
-            <div id="close-modal" onclick="showModal(false)">&times;</div>
+    <div class="modal" id="info-modal" onclick="if(event.target === this) showModal(this, false)">
+        <div class="info-modal-box">
+            <div class="close-modal" onclick="showModal('info-modal', false)">&times;</div>
             <div id="modal-content">
                 <br>Canvas is a game where you draw pixels on a canvas and create things. <br>
 
@@ -24,7 +24,7 @@
                 <ul>
                     <li>Be nice. Don't cause chaos or destroy things people have obviously worked hard on.</li>
                     <li>Drawings should be SFW. Kids use this.</li>
-                    <li>Don't hack.</li>
+                    <li>Don't hack or use bots.</li>
                 </ul>
 
                 Code is on <a target="_blank" href="https://github.com/chunkybanana/canvas">Github</a>.

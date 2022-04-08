@@ -46,8 +46,8 @@ let startCountdown = () => {
     setTimeout(startCountdown, 20);
 }
 
-let showModal = (bool) => {
-    document.getElementById("info-modal").style.display = bool ? "block" : "none";
+let showModal = (elem, bool) => {
+    (typeof elem == 'string' ? document.getElementById(elem) : elem).style.display = bool ? "block" : "none";
 }
 
 canvas.addEventListener('pointerdown', () => {
@@ -64,7 +64,9 @@ canvas.addEventListener('pointerdown', () => {
             canvas.disabled = true;
         }
         drawRect(x, y, drawColor);
-        ws.send(formatMessage(x, y, COLORS.indexOf(drawColor)).toString());
+        ws.send(JSON.stringify({
+            d: formatMessage(x, y, COLORS.indexOf(drawColor)).toString()
+        }));
     }
 })
 
@@ -91,16 +93,16 @@ var start_ws = () => {
     }
 
     ws.onmessage = message => {
-        console.log('got me some data', message.data);
         if(!recievedData) {
             recievedData = true;
             render(decodeData(message.data));
             return;
         }
-        message.data.text().then((data) => {
-            var decoded = decodeMessage(parseInt(data));
-            console.log(decoded, data);
-            drawRect(decoded.x, decoded.y, COLORS[decoded.color]);
+        message.data.text().then(JSON.parse).then((data) => {
+            if ('d' in data) {
+                var {x, y, color} = decodeMessage(parseInt(data.d))
+                drawRect(x, y, COLORS[color]);
+            }
         })
     }
 

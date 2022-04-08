@@ -43,14 +43,16 @@ data ||= Array(128).fill(0).map(() => Array(128).fill(16))
 
 let conns = [];
 
+
 ws.on('connection', (conn) => {
     let lastMessage = 0;
     conn.send(formatData(data));
     conns.push(conn);
     conn.on('message', (message) => {
-        if (Date.now() - lastMessage > 2500) {
+        let decoded = JSON.parse(message)
+        if ('d' in decoded && Date.now() - lastMessage > 2500) {
             lastMessage = Date.now();
-            const {x, y, color} = decodeMessage(parseInt(message));
+            const {x, y, color} = decodeMessage(parseInt(decoded.d));
             if (log) {
                 if(typeof log == "function") {
                     log(`${x} ${y} ${color} ${Date.now()} `)
@@ -64,9 +66,12 @@ ws.on('connection', (conn) => {
                 }
             }
             data[y][x] = color;
-            for (let _conn of conns) {
-                if (_conn != conn) _conn.send(message);
-            }
+        } // Add more support here
+        
+        // Eventually we should turn this into a tick-based event loop
+        // But for now, just propagate it.
+        for (let _conn of conns) {
+            if (_conn != conn) _conn.send(message);
         }
     })
     conn.on('close', () => {
