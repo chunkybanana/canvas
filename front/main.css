@@ -1,29 +1,33 @@
 #toolbar {
     position: absolute; 
     bottom: 0;
-    left: 0;
-    width: 100vw;
-    height: 100px;
+    left: max(0px, 50vw - 50vh + 30px);
+    width: min(100vw,(100vh - 60px));
+    height: 60px;
     background-color: #ccc;
     text-align: center;
-    line-height: 40px;
+}
+
+body {
+    background-color: #ccc;
 }
 #canvas-container {
     position: absolute;
     top: 0;
     left: 0;
     width: 100vw;
-    height: calc(100vh - 100px);
+    height: calc(100vh - 60px);
     background-color: #ccc;
 }
 .color-button {
-    width: calc(90vw / 18 - 5px);
+    width: /*calc(min(100vw,700px) / 12)*/ calc(min(100vw,(100vh - 60px)) / 12);
     height: 30px;
     padding-top: 10px;
-    border-radius: 5px;
-    border: 1px solid #888;
+    /* border-radius: 5px; */
+    /* border: 1px solid #888; */
+    border: none;
     display: inline-block;
-    margin-left: 5px;
+    /* margin-left: 5px; */
     cursor: pointer;
 }
 *:disabled {
@@ -34,12 +38,16 @@
     border: 5px solid #888;
 }
 #timer {
-    display: inline-block;
-    width: 100px;
-    height: 25px;
-    border: 1px solid black;
-    border-radius: 5px;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    height: 40px;
+    /* border: 1px solid black;
+    border-radius: 5px;*/
     font-family: arial;
+    top: 0px;
+    font-size: 40px;
+    top: 7px;
 }
 
 canvas {
@@ -66,7 +74,7 @@ canvas {
 #stats {
     position: absolute;
     top: 5px;
-    right: 40px;
+    right: 45px;
     width: 30px;
     height: 30px;
     color: #555;
@@ -75,7 +83,6 @@ canvas {
     font-size: 30px;
     z-index: 1;
     border-radius: 20px;
-    border: 2px solid #555;
     cursor: pointer;
 }
 
@@ -90,7 +97,7 @@ canvas {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.info-modal-box {
+.modal-box {
     position: relative;
     margin-top: 40px;
     margin-left: calc(20vw + 40px);
@@ -114,7 +121,7 @@ canvas {
     cursor: pointer;
 }
 
-#modal-content {
+.modal-content {
     font-family: Arial, Helvetica, sans-serif;
     margin-left: 10px;
     margin-top: 10px;
