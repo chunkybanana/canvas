@@ -17,7 +17,7 @@
     background-color: #ccc;
 }
 .color-button {
-    width: calc(90vw / 16);
+    width: calc(90vw / 18 - 5px);
     height: 30px;
     padding-top: 10px;
     border-radius: 5px;
@@ -103,3 +103,4 @@ canvas {
     margin-left: 10px;
     margin-top: 10px;
 }
+

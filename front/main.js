@@ -1,4 +1,5 @@
-const COLORS = ["red", "orangered", "orange", "gold", "yellow", "yellowgreen", "lime", "green", "turquoise", "dodgerblue", "blue", "indigo", "violet", "pink", "black", "white"];
+// Subject of constant debate
+const COLORS = ["#a31717", "red", "orange", "gold", "#f2f28c", "#23f223", "#00ae00", "turquoise", "dodgerblue", "blue", "#a700a7", "violet", "pink", "black",  "#555", "#ccc", "white"];
 
 const canvas = responsiveCanvas(128, 128, document.getElementById("canvas-container"));
 const ctx = canvas.getContext("2d");
@@ -30,6 +31,7 @@ for (let color of COLORS) {
     buttons.appendChild(button);
 }
 buttons.childNodes[14].click();
+
 let startCountdown = () => {
     let time = Date.now() - lastClick;
     if (time > 2500) {

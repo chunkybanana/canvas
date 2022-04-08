@@ -39,7 +39,7 @@ program.parse();
 
 var ws = new r_ws.Server({port: port});
 
-data ||= Array(128).fill(0).map(() => Array(128).fill(15)) 
+data ||= Array(128).fill(0).map(() => Array(128).fill(16)) 
 
 let conns = [];
 
