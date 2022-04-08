@@ -10,14 +10,14 @@
 */
 
 let formatMessage = (x, y, color) => {
-    return color << 14 | x << 7 | y | 1 << 18;
+    return color << 14 | x << 7 | y;
 }
 
 let decodeMessage = (message) => {
     return {
         y: message & 0x7F,
         x: message >> 7 & 0x7F,
-        color: message >> 14 & 0xF
+        color: message >> 14
     }
 }
 

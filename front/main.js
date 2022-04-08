@@ -1,5 +1,5 @@
 // Subject of constant debate
-const COLORS = ["#a31717", "red", "orange", "gold", "#f2f28c", "#23f223", "#00ae00", "turquoise", "dodgerblue", "blue", "#a700a7", "violet", "pink", "black",  "#555", "#ccc", "white"];
+const COLORS = ["#a31717", "red", "orange", "gold", "#f2f28c", "#23f223", "#00ae00", "turquoise", "dodgerblue", "blue", "#a700a7", "violet", "pink", "black",  "#555", "#ccc", "white", "#a56b2a", "tan"];
 
 const canvas = responsiveCanvas(128, 128, document.getElementById("canvas-container"));
 const ctx = canvas.getContext("2d");
