@@ -34,10 +34,10 @@ buttons.childNodes[14].click();
 
 let startCountdown = () => {
     let time = Date.now() - lastClick;
-    timer.hidden = false;
+    timer.zIndex = 2;
     if (time > 2500) {
         timer.textContent = "";
-        timer.hidden = true;
+        timer.zIndex = -1;
         for(let button of buttons.childNodes) {
             button.disabled = false;
         }

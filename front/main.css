@@ -48,6 +48,7 @@ body {
     top: 0px;
     font-size: 40px;
     top: 7px;
+    z-index: -1;
 }
 
 canvas {
