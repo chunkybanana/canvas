@@ -1,5 +1,4 @@
 // Subject of constant debate
-//const COLORS = ["#a31717", "red", "orange", "gold", "#f2f28c", "#23f223", "#00ae00", "turquoise", "dodgerblue", "blue", "#a700a7", "violet", "pink", "black",  "#555", "#ccc", "white", "#a56b2a", "tan"];
 const COLORS = ["#a31717","#fc0000","#fda500","#fed700","#c8f081","#29f222","#1aae00","#40e0d0","#1e90ff","#0800ff","#86019a","#ee46ee","#efc0cb","#000","#555","#ccc","#fff","#6a3d18","#fbdcbc","#1ebe72","#4466a1","#00408d","#7289da","#fd9aff"];
 
 const canvas = responsiveCanvas(128, 128, document.getElementById("canvas-container"));
@@ -54,9 +53,10 @@ let showModal = (elem, bool) => {
 }
 
 canvas.addEventListener('pointerdown', () => {
+    // Comment first two for serverless testing
     if (
-        /*navigator.onLine && ws.readyState == 1 
-        && */Date.now() - lastClick > 2500 
+        navigator.onLine && ws.readyState == 1 
+        && Date.now() - lastClick > 2500 
         && canvas.x < 256 && canvas.y > 0 && canvas.y < 256 && canvas.x > 0
     ) {
         lastClick = Date.now();
@@ -87,9 +87,8 @@ function render(data) {
 }
 
 var start_ws = () => {
-    // Change to ws://localhost:<PORT> for local testing
-    //ws = new WebSocket("ws://canvas.rto.run/ws");
-    ws = new WebSocket("ws://localhost:8080");
+    ws = new WebSocket("ws://canvas.rto.run/ws");
+    //ws = new WebSocket("ws://localhost:8080"); // For local testing
 
     ws.onopen = () => {
         recievedData = false;
@@ -114,8 +113,9 @@ var start_ws = () => {
     }
 }
 
-//start_ws()
+start_ws()
 
+/* Uncomment for serverless testing
 ws = {
     send(){}
-}
+}*/
