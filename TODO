@@ -11,3 +11,4 @@
 - Download button
 - Rickroll anyone who tries to hack
   - Specifically, send a message from the server that the clientside decodes as a rickroll.
+- Make a header bar

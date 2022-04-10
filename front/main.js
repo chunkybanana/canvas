@@ -87,6 +87,13 @@ let updateStats = () => {
 
 }
 
+let downloadPNG = () => {
+    var link = document.createElement('a');
+    link.download = `canvas.png`;
+    link.href = displayCanvas.toDataURL('png');
+    link.click();
+}
+
 displayCanvas.addEventListener('pointerdown', () => {
     // Comment first two for serverless testing
     if (

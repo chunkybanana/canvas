@@ -8,13 +8,22 @@
     <link rel="stylesheet" href="main.css">
 </head>
 <body>
-    <div id="info" onclick="showModal('info-modal', true)">?</div>
-    <div id="stats" onclick="showModal('stats-modal', true); updateStats()">
-        <svg width="30" height="30">
-            <rect x="1" y="20" height="10" width="8" fill="#555" />
-            <rect x="11" y="10" height="20" width="8" fill="#555" />
-            <rect x="21" y="0" height="30" width="8" fill="#555" />
-        </svg>
+    <!-- We're getting four icons, ***make a header bar already*** you sussy baka-->
+    <div class="header-bar">
+        <div id="info" class="icon" onclick="showModal('info-modal', true)">?</div>
+        <div id="stats" class="icon" onclick="showModal('stats-modal', true); updateStats()">
+            <svg width="30" height="30">
+                <rect x="1" y="20" height="10" width="8" fill="#555" />
+                <rect x="11" y="10" height="20" width="8" fill="#555" />
+                <rect x="21" y="0" height="30" width="8" fill="#555" />
+            </svg>
+        </div>
+        <div id="download" class="icon" onclick="downloadPNG()">
+            <svg width="30" height="30">
+                <rect x="7.5" y="0" height="15" width="15" fill="#555" />
+                <path d="M0,15 L15,30 L30,15 L0,15" fill="#555" />
+            </svg>
+        </div>
     </div>
     <div id="canvas-container"></div>
     <div id="toolbar">
