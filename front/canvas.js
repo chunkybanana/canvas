@@ -43,8 +43,8 @@ function responsiveCanvas(width, height, container) {
     window.addEventListener('pointerdown', getData);
     window.addEventListener('pointermove', getData);
     window.addEventListener('pointerup', function (event) {
-        // canvas.x = null;
-        // canvas.y = null;
+        canvas.x = null;
+        canvas.y = null;
         canvas.clicked = null;
     });
     window.addEventListener('keydown', function (event) {

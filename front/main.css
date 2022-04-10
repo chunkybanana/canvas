@@ -7,6 +7,10 @@
     background-color: #ccc;
     text-align: center;
 }
+#buttons {
+    display: flex;
+    flex-wrap: wrap;
+}
 
 body {
     background-color: #ccc;
@@ -20,35 +24,34 @@ body {
     background-color: #ccc;
 }
 .color-button {
-    width: /*calc(min(100vw,700px) / 12)*/ calc(min(100vw,(100vh - 60px)) / 12);
+    width: calc(min(100vw,(100vh - 60px)) / 12);
     height: 30px;
-    padding-top: 10px;
-    /* border-radius: 5px; */
-    /* border: 1px solid #888; */
-    border: none;
-    display: inline-block;
-    /* margin-left: 5px; */
+    display: inline;
+    margin-left: none;
+    box-sizing: border-box;
     cursor: pointer;
+    border: none;
 }
+.color-button.active {
+    /* the pxeger's magic. Safari can go frick itself. */
+    box-shadow: 0 3px 0 #888 inset, 3px 0 0 #888 inset, 0 0 3px #888 inset, 0 0 0 3px #888 inset;
+}
+
 *:disabled {
     opacity: 50%;
     cursor: not-allowed;
-}
-.color-button.active {
-    border: 5px solid #888;
 }
 #timer {
     position: absolute;
     text-align: center;
     width: 100%;
     height: 40px;
-    /* border: 1px solid black;
-    border-radius: 5px;*/
     font-family: arial;
     top: 0px;
     font-size: 40px;
     top: 7px;
-    z-index: -1;
+    display: none;
+    cursor: not-allowed;
 }
 
 canvas {
@@ -127,3 +130,7 @@ canvas {
     margin-left: 10px;
     margin-top: 10px;
 }
+/* taking some of the workload
+#canvas {
+
+}*/

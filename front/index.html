@@ -9,7 +9,7 @@
 </head>
 <body>
     <div id="info" onclick="showModal('info-modal', true)">?</div>
-    <div id="stats" onclick="showModal('stats-modal', true)">
+    <div id="stats" onclick="showModal('stats-modal', true); updateStats()">
         <svg width="30" height="30">
             <rect x="1" y="20" height="10" width="8" fill="#555" />
             <rect x="11" y="10" height="20" width="8" fill="#555" />
@@ -48,6 +48,8 @@
             </div>
         </div>
     </div>
+    <script src="scroller/Animate.js"></script>
+    <script src="scroller/Scroller.js"></script>
     <script src="canvas.js"></script>
     <script src="data-utils.js"></script>
     <script src="main.js"></script>
