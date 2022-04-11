@@ -20,7 +20,8 @@ body {
     top: 0;
     left: 0;
     width: 100vw;
-    height: calc(100vh - 60px);
+    /* ios safari is either ignoring or miscalculating this */
+    /*height: calc(100vh - 60px);*/
     background-color: #ccc;
 }
 .color-button {

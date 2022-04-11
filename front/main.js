@@ -1,5 +1,13 @@
 const COLORS = ["#a31717","#fc0000","#fda500","#fed700","#c8f081","#29f222","#1aae00","#40e0d0","#1e90ff","#0800ff","#86019a","#ee46ee","#efc0cb","#000","#555","#ccc","#fff","#6a3d18","#fbdcbc","#1ebe72","#4466a1","#00408d","#7289da","#fd9aff"];
 
+let reflow = () => {
+    document.getElementById('canvas-container').style.height = `${window.innerHeight - 60}px`;
+}
+
+window.addEventListener('resize', reflow);
+// This needs to happen *before* the canvas is initialized
+reflow();
+
 // Canvas that stuff is displayed on
 // TODO: Adapt x and y to true coordinates relative to internal canvas
 // I would make this canvas resizable but that's *more* work
@@ -60,7 +68,7 @@ for (let color of COLORS) {
 buttons.childNodes[13].click();
 
 // WHYYY, mobile debugging
-//alert(getComputedStyle(document.getElementById('canvas-container')).height)
+//alert(getComputedStyle(document.getElementById('canvas-container')).height + ' ' + window.innerHeight)
 
 let startCountdown = () => {
     let time = Date.now() - lastClick;
