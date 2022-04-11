@@ -9,7 +9,7 @@ const displayCtx = displayCanvas.getContext("2d");
 
 // I got tired of toggling settings, so change these for local / serverless hosting
 const LOCAL = false;
-const SERVER = true;
+const SERVER = false;
 
 // Canvas that is drawn on
 const canvas = document.createElement('canvas');
@@ -60,7 +60,7 @@ for (let color of COLORS) {
 buttons.childNodes[13].click();
 
 // WHYYY, mobile debugging
-//alert(window.innerWidth / 12 + ' ' + getComputedStyle(buttons.childNodes[13]).width);
+//alert(getComputedStyle(document.getElementById('canvas-container')).height)
 
 let startCountdown = () => {
     let time = Date.now() - lastClick;
@@ -93,7 +93,7 @@ let downloadPNG = () => {
     link.click();
 }
 
-displayCanvas.addEventListener('pointerdown', () => {
+displayCanvas.addEventListener('pointerup', () => {
     if (
         (!SERVER || (navigator.onLine && ws.readyState == 1))
         && Date.now() - lastClick > 2500 
@@ -143,7 +143,6 @@ var start_ws = () => {
     }
 
     ws.onmessage = message => {
-        console.log(message.data);
         ((data) => {
             if ('d' in data) {
                 var {x, y, color} = decodeMessage(parseInt(data.d))
@@ -154,7 +153,6 @@ var start_ws = () => {
                 updateCount();
             }
             if ('r' in data) { // Only in first request
-                console.log('canvas data recieved')
                 render(decodeData(data.r));
                 playerCount = data.s;
                 updateCount();
