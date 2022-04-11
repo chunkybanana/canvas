@@ -43,11 +43,18 @@ data ||= Array(128).fill(0).map(() => Array(128).fill(16))
 
 let conns = [];
 
-
 ws.on('connection', (conn) => {
     let lastMessage = 0;
-    conn.send(formatData(data));
+    conn.send(JSON.stringify({
+        r: formatData(data),
+        s: conns.length + 1
+    }));
     conns.push(conn);
+    for (let _conn of conns) {
+        _conn.send(JSON.stringify({
+            s: conns.length
+        }));
+    }
     conn.on('message', (message) => {
         let decoded = JSON.parse(message)
         if ('d' in decoded && Date.now() - lastMessage > 2500) {
@@ -71,10 +78,15 @@ ws.on('connection', (conn) => {
         // Eventually we should turn this into a tick-based event loop
         // But for now, just propagate it.
         for (let _conn of conns) {
-            if (_conn != conn) _conn.send(message);
+            if (_conn != conn) _conn.send(message.toString());
         }
     })
     conn.on('close', () => {
         conns.splice(conns.indexOf(conn), 1);
+        for (let _conn of conns) {
+            _conn.send(JSON.stringify({
+                s: conns.length
+            }));
+        }
     })
 })

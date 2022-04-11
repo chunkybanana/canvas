@@ -6,7 +6,7 @@
     color  x      y 
 
     - Data:
-    Uint8Array of length 128 * 128;
+    String of length 128^2 with characters A-X+
 */
 
 let formatMessage = (x, y, color) => {
@@ -20,19 +20,9 @@ let decodeMessage = (message) => {
         color: message >> 14
     }
 }
-
-/*let formatData = (data) => {
-    const buffer = new ArrayBuffer(data.length / 2);
-    const view = new Uint8Array(buffer);
-    for (let i = 0; i < data.length; i += 2) {
-        view[i / 2] = data[i] | data[i + 1] << 4;
-    }
-    return buffer;
-}*/
-
 let formatData = (data) => {
-    // Generates a human-readable string so you can sorta see what's going on. Skips past " because JSON
-    return data.flat().map(c => String.fromCharCode(c + 35)).join('');
+    // Generates a human-readable string so you can sorta see what's going on. Starts at A so you can spell AMOGUS in the server logs.
+    return data.flat().map(c => String.fromCharCode(c + 65)).join('');
 }
 
 let decodeData = (str) => {
@@ -40,19 +30,9 @@ let decodeData = (str) => {
     let size = Math.sqrt(str.length) | 0;
     let data = Array(size).fill(0).map(() => []);
     for (let i = 0; i < str.length; i++) {
-        data[i / size | 0][i % size] = str.charCodeAt(i) - 35;
+        data[i / size | 0][i % size] = str.charCodeAt(i) - 65;
     }
     return data;
-}
-
-let decodeBlob = (blob, decoder) => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-            resolve(decoder(reader.result));
-        }
-        reader.readAsArrayBuffer(blob);
-    })
 }
 
 if (typeof module !== 'undefined' && module.exports) module.exports = {

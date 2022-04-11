@@ -7,8 +7,8 @@
   - Scroller - initialize before display canvas and it *should* take priority
 - Get stats working
   - Favourite colours UI
-- Add player count
-- Download button
+[x] Add player count
+[x] Download button
 - Rickroll anyone who tries to hack
   - Specifically, send a message from the server that the clientside decodes as a rickroll.
-- Make a header bar
+[x] Make a header bar

@@ -84,6 +84,17 @@ canvas {
     margin-left: 5px;
 }
 
+#player-count {
+    color: #555;
+    cursor: none;
+    height: 30px;
+    font-size: 35px;
+    font-family: Arial, Helvetica, sans-serif;
+    z-index: 2;
+    margin-left: 10px;
+    margin-top: -5px;
+}
+
 .modal {
     position: absolute;
     top: 0;
@@ -128,3 +139,16 @@ canvas {
 #canvas {
 
 }*/
+
+#loader {
+    animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
