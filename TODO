@@ -1,9 +1,9 @@
-- Fix canvas positioning on mobile
+[x] Fix canvas positioning on mobile
   - Figure out what the frick's going on
-- Get placement working properly on mobile
+[x] Get placement working properly on mobile
   - Might be related to ^^
   - Must work with scrolling
-- Get zooming/scrolling working
+[x] Get zooming/scrolling working
   - Scroller - initialize before display canvas and it *should* take priority
 - Get stats working
   - Favourite colours UI

@@ -1,12 +1,6 @@
 const COLORS = ["#a31717","#fc0000","#fda500","#fed700","#c8f081","#29f222","#1aae00","#40e0d0","#1e90ff","#0800ff","#86019a","#ee46ee","#efc0cb","#000","#555","#ccc","#fff","#6a3d18","#fbdcbc","#1ebe72","#4466a1","#00408d","#7289da","#fd9aff"];
 
-let reflow = () => {
-    document.getElementById('canvas-container').style.height = `${window.innerHeight - 60}px`;
-}
-
-window.addEventListener('resize', reflow);
-// This needs to happen *before* the canvas is initialized
-reflow();
+document.getElementById('canvas-container').style.height = `${window.innerHeight - 60}px`;
 
 // Canvas that stuff is displayed on
 // TODO: Adapt x and y to true coordinates relative to internal canvas
@@ -19,13 +13,20 @@ const displayCtx = displayCanvas.getContext("2d");
 const LOCAL = false;
 const SERVER = false;
 
+const SIZE = 128;
+
 // Canvas that is drawn on
 const canvas = document.createElement('canvas');
-canvas.width = 128;
-canvas.height = 128;
+canvas.width = canvas.height = SIZE;
 const ctx = canvas.getContext("2d");
 displayCtx.imageSmoothingEnabled = false;
 ctx.imageSmoothingEnabled = false;
+
+
+ctx.fillStyle = "#ccc";
+ctx.fillRect(0, 0, SIZE + 40, SIZE + 40);
+ctx.fillStyle = "white";
+ctx.fillRect(0, 0, SIZE, SIZE);
 
 const buttons = document.getElementById("buttons");
 const timer = document.getElementById("timer");
@@ -45,16 +46,119 @@ let drawColor = 'black';
 
 let recievedData, playerCount;
 
-// COMING SOON
-let scroller = new Scroller((left, top, zoom) => {
+let reflow = () => {
+    document.getElementById('canvas-container').style.height = `${window.innerHeight - 60}px`;
+    scroller.setDimensions(parseInt(displayCanvas.style.width), parseInt(displayCanvas.style.height), parseInt(displayCanvas.style.width), parseInt(displayCanvas.style.height));
 
-})
+}
+
+let zoom = {
+    left: 0, top: 0, zoom: 1
+};
+
+window.addEventListener('resize', reflow);
+
+let updateDisplay = () => {
+    displayCtx.clearRect(0, 0, 1024, 1024);
+    let canvasSize = parseInt(displayCanvas.style.width);
+    let left = zoom.left / zoom.z / (canvasSize / SIZE)
+    let top = zoom.top / zoom.z / (canvasSize / SIZE)
+    let size = SIZE / zoom.z
+
+    displayCtx.drawImage(canvas, 
+        left, top, size, size,
+    0, 0, 1024, 1024);
+}
+
+
+// Initialize Scroller
+let scroller = new Scroller((left, top, z) => {
+    zoom = {left, top, z};
+    console.log(left, top, z);
+    updateDisplay();
+}, {
+	zooming: true,
+    bouncing: false,
+    minZoom: 1,
+    maxZoom: 2
+});
+
+scroller.setDimensions(parseInt(displayCanvas.style.width), parseInt(displayCanvas.style.height), parseInt(displayCanvas.style.width), parseInt(displayCanvas.style.height));
+
+scroller.setPosition(
+   (window.innerWidth - Math.min((window.innerHeight - 60), window.innerWidth)) / 2,
+    (window.innerHeight - Math.min((window.innerHeight - 60), window.innerWidth) - 60) / 2
+);
+
+
+displayCanvas.addEventListener("touchstart", function(e) {
+    // Don't react if initial down happens on a form element
+    if (e.touches[0] && e.touches[0].target && e.touches[0].target.tagName.match(/input|textarea|select/i)) {
+        return;
+    }
+
+    scroller.doTouchStart(e.touches, e.timeStamp);
+    e.preventDefault();
+}, false);
+
+document.addEventListener("touchmove", function(e) {
+    scroller.doTouchMove(e.touches, e.timeStamp, e.scale);
+}, false);
+
+document.addEventListener("touchend", function(e) {
+    scroller.doTouchEnd(e.timeStamp);
+}, false);
+
+document.addEventListener("touchcancel", function(e) {
+    scroller.doTouchEnd(e.timeStamp);
+}, false);
+
+var mousedown = false;
+
+displayCanvas.addEventListener("mousedown", function(e) {
+    if (e.target.tagName.match(/input|textarea|select/i)) {
+        return;
+    }
+    
+    scroller.doTouchStart([{
+        pageX: e.pageX,
+        pageY: e.pageY
+    }], e.timeStamp);
+
+    mousedown = true;
+}, false);
+
+document.addEventListener("mousemove", function(e) {
+    if (!mousedown) {
+        return;
+    }
+    
+    scroller.doTouchMove([{
+        pageX: e.pageX,
+        pageY: e.pageY
+    }], e.timeStamp);
+
+    mousedown = true;
+}, false);
+
+document.addEventListener("mouseup", function(e) {
+    if (!mousedown) {
+        return;
+    }
+    
+    scroller.doTouchEnd(e.timeStamp);
+
+    mousedown = false;
+}, false);
+
+displayCanvas.addEventListener("wheel", function(e) {
+    scroller.doMouseZoom(e.detail ? (e.detail * -120) : e.wheelDelta, e.timeStamp, e.pageX, e.pageY);
+}, false);
 
 // Dynamic button generation go brr
 for (let color of COLORS) {
     const button = document.createElement("button");
     button.classList.add('color-button')
-    button.title = color;
     button.style.backgroundColor = color;
     button.addEventListener("click", () => {
         drawColor = color;        
@@ -108,7 +212,8 @@ displayCanvas.addEventListener('pointerup', () => {
         && displayCanvas.x < 1024 && displayCanvas.y > 0 && displayCanvas.y < 1024 && displayCanvas.x > 0
     ) {
         lastClick = Date.now();
-        var x = Math.floor(displayCanvas.x / 8), y = Math.floor(displayCanvas.y / 8);
+        let canvasSize = parseInt(displayCanvas.style.width);
+        var x = Math.floor((displayCanvas.x / 8 + zoom.left / (canvasSize / SIZE)) / zoom.z), y = Math.floor((displayCanvas.y / 8 + zoom.top / (canvasSize / SIZE)) / zoom.z);
         startCountdown();
         for(let button of buttons.childNodes) {
             button.disabled = true;
@@ -135,11 +240,6 @@ let render = (data) =>  {
         }
     }
     updateDisplay();
-}
-
-let updateDisplay = () => {
-    displayCtx.clearRect(0, 0, 1024, 1024);
-    displayCtx.drawImage(canvas, 0, 0, 1024, 1024);
 }
 
 updateCount = () => document.getElementById('player-count').innerText = playerCount;

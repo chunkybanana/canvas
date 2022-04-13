@@ -57,7 +57,7 @@ body {
 
 canvas {
     image-rendering: pixelated;
-    background-color: white;
+    background-color: #ccc;
 }
 
 #info {
@@ -87,7 +87,7 @@ canvas {
 
 #player-count {
     color: #555;
-    cursor: none;
+    cursor: pointer;
     height: 30px;
     font-size: 35px;
     font-family: Arial, Helvetica, sans-serif;
