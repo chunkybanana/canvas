@@ -201,7 +201,7 @@ let updateStats = () => {
 let downloadPNG = () => {
     var link = document.createElement('a');
     link.download = `canvas.png`;
-    link.href = displayCanvas.toDataURL('png');
+    link.href = canvas.toDataURL('png');
     link.click();
 }
 
