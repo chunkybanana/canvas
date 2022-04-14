@@ -120,6 +120,13 @@ canvas {
     opacity: 1;    
 }
 
+@media screen and (max-width: 600px) {
+    .modal-box {
+        margin-left: 10px;
+        width: calc(100vw - 20px);
+    }
+}
+
 .close-modal {
     position: absolute;
     top: 0;
