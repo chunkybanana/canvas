@@ -22,6 +22,9 @@ const ctx = canvas.getContext("2d");
 displayCtx.imageSmoothingEnabled = false;
 ctx.imageSmoothingEnabled = false;
 
+// For checking whether the mouse has moved
+let dx = 0, dy = 0
+
 
 ctx.fillStyle = "#ccc";
 ctx.fillRect(0, 0, SIZE + 40, SIZE + 40);
@@ -30,6 +33,10 @@ ctx.fillRect(0, 0, SIZE, SIZE);
 
 const buttons = document.getElementById("buttons");
 const timer = document.getElementById("timer");
+const toggle = document.getElementById("toggle");
+// WHYY, firefox
+if(!toggle.checked) toggle.click();
+let place = true;
 
 // Which iteration of the canvas are we on? 1-indexed + hardcoded.
 const iteration = 2;
@@ -70,17 +77,31 @@ let updateDisplay = () => {
     0, 0, 1024, 1024);
 }
 
+let drawRect = (x, y, color) => {
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, 1, 1)
+}
+
+let render = (data) =>  {
+    for (let y in data) {
+        for(let x in data[y]) {
+            drawRect(x, y, COLORS[data[y][x]]);
+        }
+    }
+    updateDisplay();
+}
+
 
 // Initialize Scroller
 let scroller = new Scroller((left, top, z) => {
     zoom = {left, top, z};
-    console.log(left, top, z);
     updateDisplay();
 }, {
 	zooming: true,
     bouncing: false,
     minZoom: 1,
-    maxZoom: 2
+    // Placing tiny pixels on mobile is *hard*.
+    maxZoom: 12,
 });
 
 scroller.setDimensions(parseInt(displayCanvas.style.width), parseInt(displayCanvas.style.height), parseInt(displayCanvas.style.width), parseInt(displayCanvas.style.height));
@@ -90,7 +111,7 @@ scroller.setPosition(
     (window.innerHeight - Math.min((window.innerHeight - 60), window.innerWidth) - 60) / 2
 );
 
-handleScroller(displayCanvas, document, scroller)
+handleScroller(displayCanvas, document, scroller, updateDisplay)
 
 // Dynamic button generation go brr
 for (let color of COLORS) {
@@ -142,11 +163,25 @@ let downloadPNG = () => {
     link.click();
 }
 
-displayCanvas.addEventListener('pointerup', () => {
+// These event listeners bubble in weird orders.
+displayCanvas.addEventListener('pointerdown', (event) => {
+    // We use clientX / clientY because it's a simple position check
+    dx = event.clientX;
+    dy = event.clientY;
+})
+
+displayCanvas.addEventListener('pointerup', (event) => {
     if (
-        (!SERVER || (navigator.onLine && ws.readyState == 1))
-        && Date.now() - lastClick > 2500 
-        && displayCanvas.x < 1024 && displayCanvas.y > 0 && displayCanvas.y < 1024 && displayCanvas.x > 0
+        // Server handling
+        (!SERVER || (navigator.onLine && ws.readyState == 1)) &&
+        // Timing and disabling    
+        place && Date.now() - lastClick > 2500 
+        // Within bounds
+        && displayCanvas.x < 1024 && displayCanvas.y > 0
+        && displayCanvas.y < 1024 && displayCanvas.x > 0
+        // Mouse hasn't moved
+        && (dx == event.clientX && dy == event.clientY 
+            || (dy == 0 && dx == 0))
     ) {
         lastClick = Date.now();
         let canvasSize = parseInt(displayCanvas.style.width);
@@ -165,19 +200,16 @@ displayCanvas.addEventListener('pointerup', () => {
     }
 })
 
-let drawRect = (x, y, color) => {
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y, 1, 1)
-}
-
-let render = (data) =>  {
-    for (let y in data) {
-        for(let x in data[y]) {
-            drawRect(x, y, COLORS[data[y][x]]);
-        }
+window.addEventListener('keypress', () => {
+    console.log(displayCanvas.keys)
+    if (displayCanvas.keys.c) {
+        toggle.click();
     }
-    updateDisplay();
-}
+})
+
+toggle.addEventListener('click', () => {
+    place = !place
+})
 
 updateCount = () => document.getElementById('player-count').innerText = playerCount;
 
@@ -216,6 +248,8 @@ var start_ws = () => {
         setTimeout(start_ws, 2000);
     }
 }
+
+
 
 if (SERVER) {
     start_ws()

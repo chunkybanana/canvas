@@ -1,5 +1,5 @@
 // Wrapper to yeet boilerplate out of main.js
-let handleScroller = (displayCanvas, document, scroller) => {
+let handleScroller = (displayCanvas, document, scroller, updateDisplay) => {
 
     displayCanvas.addEventListener("touchstart", function(e) {
         // Don't react if initial down happens on a form element
@@ -62,6 +62,39 @@ let handleScroller = (displayCanvas, document, scroller) => {
     }, false);
 
     displayCanvas.addEventListener("wheel", function(e) {
-        scroller.doMouseZoom(e.detail ? (e.detail * -120) : e.wheelDelta, e.timeStamp, e.pageX, e.pageY);
+        scroller.doMouseZoom((e.detail ? (e.detail * -120) : e.wheelDelta) * -15, e.timeStamp, e.pageX, e.pageY);
     }, false);
+
+    window.addEventListener('keydown', () => {
+        let DIST = 10, keys = displayCanvas.keys;
+        if (keys.ArrowUp || keys.w) {
+            scroller.scrollBy(0, -DIST, true);
+            updateDisplay();
+        }
+
+        if (keys.ArrowDown || keys.s) {
+            scroller.scrollBy(0, DIST, true);
+            updateDisplay();
+        }
+
+        if (keys.ArrowLeft || keys.a) {
+            scroller.scrollBy(-DIST, 0,  true);
+            updateDisplay();
+        }
+
+        if (keys.ArrowRight || keys.d) {
+            scroller.scrollBy(DIST, 0, true);
+            updateDisplay();
+        }
+
+        if (keys.z) {
+            scroller.zoomBy(1.1, true);
+            updateDisplay();
+        }
+
+        if(keys.x) {
+            scroller.zoomBy(0.9, true);
+            updateDisplay();
+        }
+    })
 }

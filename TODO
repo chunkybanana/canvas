@@ -1,10 +1,6 @@
 [x] Fix canvas positioning on mobile
-  - Figure out what the frick's going on
 [x] Get placement working properly on mobile
-  - Might be related to ^^
-  - Must work with scrolling
 [x] Get zooming/scrolling working
-  - Scroller - initialize before display canvas and it *should* take priority
 - Get stats working
   - Favourite colours UI
 [x] Add player count
@@ -12,3 +8,11 @@
 - Rickroll anyone who tries to hack
   - Specifically, send a message from the server that the clientside decodes as a rickroll.
 [x] Make a header bar
+- Add key navigation
+  [x] Up/down/left/right
+  [x] WASD
+  [x] Z/X to zoom
+  - C to toggle placing
+- Add toggle placing
+  - Switch for mobile
+  - Switch + ^^^ for desktop
