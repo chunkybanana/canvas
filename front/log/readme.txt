@@ -1,0 +1,1 @@
+Log files go here. Ideally they should be named 1.log, 2.log, 3.log, etc. Use the -l option on main.js to specify the log file name.

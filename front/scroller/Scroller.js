@@ -1,4 +1,4 @@
-// Gosh this is archaic. Might rewrite it in ES6 someday
+// Gosh this is archaic. Unfortunately, it's the blocking point to adding ES6 modules.
 
 /*
  * Scroller

@@ -65,7 +65,6 @@ ws.on('connection', (conn) => {
                     log(`${x} ${y} ${color} ${Date.now()} `)
                 } else {
                     logs.push(`${x} ${y} ${color} ${Date.now()} `);
-                    console.log(logs)
                     if(logs.length > 100) {
                         fs.appendFileSync(log, logs.join("\n") + '\n');
                         logs = [];

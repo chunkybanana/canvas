@@ -10,8 +10,8 @@ displayCanvas.id = "canvas";
 const displayCtx = displayCanvas.getContext("2d");
 
 // I got tired of toggling settings, so change these for local / serverless hosting
-const LOCAL = false;
-const SERVER = false;
+const LOCAL = true;
+const SERVER = true;
 
 const SIZE = 128;
 

@@ -8,11 +8,12 @@
 - Rickroll anyone who tries to hack
   - Specifically, send a message from the server that the clientside decodes as a rickroll.
 [x] Make a header bar
-- Add key navigation
+[x] Add key navigation
   [x] Up/down/left/right
   [x] WASD
   [x] Z/X to zoom
-  - C to toggle placing
-- Add toggle placing
+  [x] C to toggle placing
+[x] Add toggle placing
   - Switch for mobile
   - Switch + ^^^ for desktop
+[x] timelapses
