@@ -1,11 +1,11 @@
 [x] Fix canvas positioning on mobile
 [x] Get placement working properly on mobile
 [x] Get zooming/scrolling working
-- Get stats working
+[x] Get stats working
   - Favourite colours UI
 [x] Add player count
 [x] Download button
-- Rickroll anyone who tries to hack
+[x] Rickroll anyone who tries to hack
   - Specifically, send a message from the server that the clientside decodes as a rickroll.
 [x] Make a header bar
 [x] Add key navigation
