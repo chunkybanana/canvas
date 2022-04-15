@@ -265,6 +265,7 @@ var start_ws = () => {
             if ('d' in data) {
                 var {x, y, color} = decodeMessage(parseInt(data.d))
                 drawRect(x, y, COLORS[color]);
+                updateDisplay();
             }
             if ('s' in data) {
                 playerCount = data.s;
