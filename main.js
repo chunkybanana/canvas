@@ -56,7 +56,12 @@ ws.on('connection', (conn) => {
         }));
     }
     conn.on('message', (message) => {
-        let decoded = JSON.parse(message)
+        let decoded;
+        try {
+            decoded = JSON.parse(message)
+        } catch(e) {
+            return;
+        }
         if ('d' in decoded) {
             if(Date.now() - lastMessage > 2500) {
                 lastMessage = Date.now();
