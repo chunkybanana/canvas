@@ -1,9 +1,5 @@
-front/screenlog.*
-front/*.log
 canvas.json
 *.log
 screenlog.*
-node_modules
-package-lock.json
 node_modules
 package-lock.json

@@ -10,7 +10,7 @@ displayCanvas.id = "canvas";
 const displayCtx = displayCanvas.getContext("2d");
 
 // I got tired of toggling settings, so change these for local / serverless hosting
-const LOCAL = true;
+const LOCAL = false;
 const SERVER = true;
 
 const SIZE = 128;
@@ -40,10 +40,14 @@ let place = true;
 
 // Which iteration of the canvas are we on? 1-indexed + hardcoded.
 const iteration = 2;
-
-let stats = (localStorage.getItem("stats") || Array(iteration).fill(0).map(()=>({})))
+let stats;
+try {
+    stats = (JSON.parse(localStorage.getItem("stats")) || Array(iteration).fill(0).map(()=>({})))
     .map(v => COLORS.forEach(c => v[c] ||= 0) || v);
-
+} catch(e){
+    console.error(e)
+    console.log('Stats not found');
+}
 // Don't worry, ws is initialized later
 var ws;
 
@@ -151,9 +155,44 @@ let startCountdown = () => {
 let showModal = (elem, bool) => {
     (typeof elem == 'string' ? document.getElementById(elem) : elem).style.display = bool ? "block" : "none";
 }
-// COMING SOON
-let updateStats = () => {
 
+let updateStats = () => {
+    let placedPixels = document.getElementById("placed-pixels");
+    let totalPixels = document.getElementById("total-pixels");
+
+    placedPixels.innerText = Object.values(stats[iteration - 1]).reduce((a, b) => a + b, 0)
+    totalPixels.innerText = stats.flatMap(stat => Object.values(stats[iteration - 1])).reduce((a, b) => a + b, 0)
+
+    let colourCounts = {};
+    for (let color of COLORS) {
+        for (let stat of stats) {
+            colourCounts[color] = (colourCounts[color] || 0) + stat[color];
+        }
+    }
+
+    let sortedColours = Object.entries(colourCounts).sort((a, b) => b[1] - a[1]);
+    let topColours = sortedColours.slice(0, 5);
+    
+    let topColour = document.getElementById("favorite-colors");
+
+    topColour.innerHTML = "";
+
+    for (let [color, count] of topColours) {
+        let li = document.createElement("li");
+        let span = document.createElement("span");
+        span.style.backgroundColor = color;
+        span.style.color = "#888";
+        span.innerHTML = `&nbsp;`.repeat(5);
+        li.appendChild(span);
+
+        let text = document.createElement("span");
+        text.innerHTML = `&times;${count}`;
+        li.appendChild(text);
+
+        topColour.appendChild(li);
+    }
+
+    localStorage.setItem("stats", JSON.stringify(stats));
 }
 
 let downloadPNG = () => {
@@ -194,11 +233,13 @@ displayCanvas.addEventListener('pointerup', (event) => {
         drawRect(x, y, drawColor);
         updateDisplay();
         stats[iteration - 1][drawColor]++;
+        updateStats();
         ws.send(JSON.stringify({
             d: formatMessage(x, y, COLORS.indexOf(drawColor)).toString()
         }));
     }
 })
+
 
 window.addEventListener('keypress', () => {
     console.log(displayCanvas.keys)
@@ -238,6 +279,8 @@ var start_ws = () => {
                 document.getElementById('loader').style.display = 'none';
                 return;
             }
+            // Rickroll if too fast
+            if ('e' in data) location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
         })(JSON.parse(message.data));
     }
 

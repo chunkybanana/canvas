@@ -57,21 +57,27 @@ ws.on('connection', (conn) => {
     }
     conn.on('message', (message) => {
         let decoded = JSON.parse(message)
-        if ('d' in decoded && Date.now() - lastMessage > 2500) {
-            lastMessage = Date.now();
-            const {x, y, color} = decodeMessage(parseInt(decoded.d));
-            if (log) {
-                if(typeof log == "function") {
-                    log(`${x} ${y} ${color} ${Date.now()} `)
-                } else {
-                    logs.push(`${x} ${y} ${color} ${Date.now()} `);
-                    if(logs.length > 100) {
-                        fs.appendFileSync(log, logs.join("\n") + '\n');
-                        logs = [];
+        if ('d' in decoded) {
+            if(Date.now() - lastMessage > 2500) {
+                lastMessage = Date.now();
+                const {x, y, color} = decodeMessage(parseInt(decoded.d));
+                if (log) {
+                    if(typeof log == "function") {
+                        log(`${x} ${y} ${color} ${Date.now()} `)
+                    } else {
+                        logs.push(`${x} ${y} ${color} ${Date.now()} `);
+                        if(logs.length > 100) {
+                            fs.appendFileSync(log, logs.join("\n") + '\n');
+                            logs = [];
+                        }
                     }
                 }
+                data[y][x] = color;
+            } else {
+                // Rickroll
+                conn.send(JSON.stringify({"e": "r"}))
             }
-            data[y][x] = color;
+            
         } // Add more support here
         
         // Eventually we should turn this into a tick-based event loop
