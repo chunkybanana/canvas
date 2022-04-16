@@ -22,6 +22,8 @@ const ctx = canvas.getContext("2d");
 displayCtx.imageSmoothingEnabled = false;
 ctx.imageSmoothingEnabled = false;
 
+let data = Array(SIZE).fill(0).map(() => Array(SIZE).fill(16));
+
 // For checking whether the mouse has moved
 let dx = 0, dy = 0
 
@@ -85,6 +87,7 @@ let updateDisplay = () => {
 let drawRect = (x, y, color) => {
     ctx.fillStyle = color;
     ctx.fillRect(x, y, 1, 1)
+    data[y][x] = COLORS.indexOf(color)
 }
 
 let render = (data) =>  {
@@ -211,6 +214,11 @@ displayCanvas.addEventListener('pointerdown', (event) => {
 })
 
 displayCanvas.addEventListener('pointerup', (event) => {
+
+    let canvasSize = parseInt(displayCanvas.style.width);
+    let s = (canvasSize / SIZE);
+    let x = Math.floor((displayCanvas.x / 8 + zoom.left / s) / zoom.z), 
+        y = Math.floor((displayCanvas.y / 8 + zoom.top / s) / zoom.z);
     if (
         // Server handling
         (!SERVER || (navigator.onLine && ws.readyState == 1)) &&
@@ -222,10 +230,11 @@ displayCanvas.addEventListener('pointerup', (event) => {
         // Mouse hasn't moved
         && (dx == event.clientX && dy == event.clientY 
             || (dy == 0 && dx == 0))
+        // Not redrawing
+        && data[y][x] != COLORS.indexOf(drawColor)
     ) {
         lastClick = Date.now();
-        let canvasSize = parseInt(displayCanvas.style.width);
-        var x = Math.floor((displayCanvas.x / 8 + zoom.left / (canvasSize / SIZE)) / zoom.z), y = Math.floor((displayCanvas.y / 8 + zoom.top / (canvasSize / SIZE)) / zoom.z);
+
         startCountdown();
         for(let button of buttons.childNodes) {
             button.disabled = true;
@@ -274,6 +283,7 @@ var start_ws = () => {
             }
             if ('r' in data) { // Only in first request
                 render(decodeData(data.r));
+                data = decodeData(data.r)
                 playerCount = data.s;
                 updateCount();
                 document.getElementById('player-icon').style.display = 'block';
