@@ -59,5 +59,6 @@ function responsiveCanvas(width, height, container) {
         document.body.appendChild(canvas);
     }
     onLoad();
+    canvas.resize = onLoad;
     return canvas;
 }

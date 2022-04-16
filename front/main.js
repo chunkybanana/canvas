@@ -61,6 +61,7 @@ let reflow = () => {
     document.getElementById('canvas-container').style.height = `${window.innerHeight - 60}px`;
     scroller.setDimensions(parseInt(displayCanvas.style.width), parseInt(displayCanvas.style.height), parseInt(displayCanvas.style.width), parseInt(displayCanvas.style.height));
 
+    displayCanvas.resize();
 }
 
 let zoom = {
