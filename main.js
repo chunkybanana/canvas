@@ -75,7 +75,7 @@ ws.on('connection', (conn) => {
                         }
                     }
                     data[y][x] = color;
-                } else {
+                } else if (Date.now() - lastMessage < 1000){
                     // Rickroll
                     conn.send(JSON.stringify({"e": "r"}))
                 }
