@@ -31,7 +31,7 @@ program
         } else if (options.log) {
             log = options.log;
             // If it exists, clear it. If it doesn't exist, create it.
-            fs.writeFileSync(log, "");
+            if(!fs.existsSync(log)) fs.writeFileSync(log, "");
         }
         if (options.port) port = options.port;
     }) 
