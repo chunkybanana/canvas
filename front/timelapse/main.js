@@ -35,3 +35,38 @@ window.loadLog = () => {
         a.click();
     })
 }
+
+window.createHeatmap = () => {
+    let iteration = document.getElementById('iteration').value;
+    fetch(`../log/${iteration}.log`).then(res => res.text()).then(text => {
+        let lines = text.split('\n');
+        let log = lines
+            .map(line => line.split` `)
+            .map(([x, y, color]) => ({x: parseInt(x), y: parseInt(y), color: parseInt(color)}))
+            .filter(({x, y, color}) => x == x && y === y && color === color);
+
+        let data = Array(128).fill(0).map(a => Array(128).fill(0));
+  
+  		for (let {x, y, color} of log) {
+            data[y][x]++;
+        }
+  
+        let max = Math.max(...data.map(v => Math.max(...v)));
+
+        let canvas = document.createElement('canvas');
+        canvas.width = 128;
+        canvas.height = 128;
+        let ctx = canvas.getContext('2d')
+
+        for (let y in data) {
+            for(let x in data[y]) {
+                ctx.fillStyle = `hsl(240, 50%, ${(100 - data[y][x] * 100 / max).toFixed(2)}%)`;
+                ctx.fillRect(x, y, 1, 1);
+            }
+        }	
+  		let a = document.createElement('a');
+        a.href = canvas.toDataURL();
+        a.download = 'heatmap.png';
+        a.click();
+    })
+}
