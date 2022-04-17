@@ -5,13 +5,50 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timelapses</title>
+    <link rel="stylesheet" href="main.css">
 </head>
 <body>
     <!--Very bare bones, I know-->
-    Iteration # <input type="number" id="iteration" value="1" /> <button onclick="loadLog()">Create gif</button> <button onclick="createHeatmap()">Create heatmap</button>
+    Iteration # <input type="number" id="iteration" value="1" />
+    <h2>Gifs</h2>
+        <select id="framerate">
+            <option value="100">100fps</option>
+            <option value="50">50fps</option>
+            <option value="33">33fps</option>
+            <option value="25">25fps</option>
+            <option value="20">20fps</option>
+        </select>
+        <br>
+        <input id="speed" type="number" min="1" step="1" value="3">
+        <label for="speed">changes/frame</label><br>
+        <input type=number id="size" value="1" min="1"><label for="size">x scale</label><br>
 
-    <p id="log"></p>
 
+
+        <details>
+            <summary>Advanced</summary>
+            <input type=number id="x" value="0"><label for="x"> x position</label><br>
+            <input type=number id="y" value="0"><label for="y"> y position</label><br>
+            <input type=number id="w" value="128"><label for="w"> width</label><br>
+            <input type=number id="h" value="128"><label for="h"> height</label><br>
+            <br>
+            <input type="datetime-local" id="start" value="1970-01-01T00:00"><label for="start">start time</label><br>
+            <input type="datetime-local" value="9999-01-01T00:00" id="end"><label for="end">end time</label><br>
+
+
+        </details>
+
+        <button onclick="makeTimelapse()">Make gif</button>
+
+        <input type="submit" hidden>
+
+        <pre id="text"></pre>
+
+        <!--<div class="progress-bar">
+            <div class="progress-bar-fill" id="fill"></div>
+        </div>-->
+    <br><br>
+    <button onclick="createHeatmap()">Create heatmap</button>
     <script type="module" src="./main.js"></script>
     <!--<script src="./gif.js"></script>-->
 </body>
