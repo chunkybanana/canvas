@@ -165,7 +165,7 @@ let updateStats = () => {
     let totalPixels = document.getElementById("total-pixels");
 
     placedPixels.innerText = Object.values(stats[iteration - 1]).reduce((a, b) => a + b, 0)
-    totalPixels.innerText = stats.flatMap(stat => Object.values(stats[iteration - 1])).reduce((a, b) => a + b, 0)
+    totalPixels.innerText = stats.flatMap(stat => Object.values(stat)).reduce((a, b) => a + b, 0)
 
     let colourCounts = {};
     for (let color of COLORS) {
