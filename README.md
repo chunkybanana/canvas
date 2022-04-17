@@ -15,4 +15,4 @@ Run `node main.js -h` for help with flags.
 - [Gifenc](https://github.com/mattdesl/gifenc) for fast gif encoding
 - [this slider thing from w3schools](https://www.w3schools.com/howto/howto_css_switch.asp) - it's one of the few actually useful things there
 
-Thanks to [Radvylf](https://github.com/Radvylf) for hosting this, and [Unrelated String](https://github.com/unrelatedstring) and [pxeger](https://github.com/pxeger) among others for providing constant feedback.
+Thanks to [Radvylf](https://github.com/Radvylf) for hosting this, and [Unrelated String](https://github.com/unrelatedstring) and [pxeger](https://github.com/pxeger) among others for providing constant feedback. Thanks to [Ginger](https://github.com/gingerindustries) for designing the icon.
