@@ -9,10 +9,9 @@
     <link rel="icon" href="favicon.ico">
 </head>
 <body>
-    <!-- We're getting four icons, ***make a header bar already*** you sussy baka-->
     <div class="header-bar">
-        <div id="info" class="icon" onclick="showModal('info-modal', true)">?</div>
-        <div id="stats" class="icon" onclick="showModal('stats-modal', true); updateStats()">
+        <div id="info" class="icon" onclick="window.showModal('info-modal', true)">?</div>
+        <div id="stats" class="icon" onclick="window.showModal('stats-modal', true); updateStats()">
             <svg width="30" height="30">
                 <rect x="1" y="20" height="10" width="8" fill="#555" />
                 <rect x="11" y="10" height="20" width="8" fill="#555" />
@@ -54,15 +53,16 @@
                 </svg>
             </a>
         </div>
+        <span id="coords">0,0</span>
     </div>
     <div id="canvas-container"></div>
     <div id="toolbar">
         <div id="buttons"></div>
         <div id="timer"></div>
     </div>
-    <div class="modal" id="info-modal" onclick="if(event.target === this) showModal(this, false)">
+    <div class="modal" id="info-modal" onclick="if(event.target === this) window.showModal(this, false)">
         <div class="modal-box">
-            <div class="close-modal" onclick="showModal('info-modal', false)">&times;</div>
+            <div class="close-modal" onclick="window.showModal('info-modal', false)">&times;</div>
             <div class="modal-content">
                 <br>Canvas is a game where you draw pixels on a canvas and create things. <br>
 
@@ -87,9 +87,9 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="stats-modal" onclick="if(event.target === this) showModal(this, false)">
+    <div class="modal" id="stats-modal" onclick="if(event.target === this) window.showModal(this, false)">
         <div class="modal-box">
-            <div class="close-modal" onclick="showModal('stats-modal', false)">&times;</div>
+            <div class="close-modal" onclick="window.showModal('stats-modal', false)">&times;</div>
             <div class="modal-content">
                 You have placed <span id="placed-pixels">0</span> pixels this iteration, <span id="total-pixels">0</span> all time.
                 <br><br>
@@ -99,13 +99,9 @@
         </div>
     </div>
 
-    <!-- Archaic but it works-->
-    <script src="scroller/Animate.js"></script>
-    <script src="scroller/Scroller.js"></script>
-    <script src="scroller/wrapper.js"></script>
-
-    <script src="canvas.js"></script>
+    <!-- These have to be included because node's a sussy baka sometimes -->
+    <script src="config.js"></script>
     <script src="data-utils.js"></script>
-    <script src="main.js"></script>
+    <script type="module" src="main.js"></script>
 </body>
 </html>

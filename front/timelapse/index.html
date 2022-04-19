@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timelapses</title>
     <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="../favicon.ico">
 </head>
 <body>
     <!--Very bare bones, I know-->
@@ -29,8 +30,8 @@
             <summary>Advanced</summary>
             <input type=number id="x" value="0"><label for="x"> x position</label><br>
             <input type=number id="y" value="0"><label for="y"> y position</label><br>
-            <input type=number id="w" value="128"><label for="w"> width</label><br>
-            <input type=number id="h" value="128"><label for="h"> height</label><br>
+            <input type=number id="w" value=""><label for="w"> width</label><br>
+            <input type=number id="h" value=""><label for="h"> height</label><br>
             <br>
             <input type="datetime-local" id="start" value="1970-01-01T00:00"><label for="start">start time</label><br>
             <input type="datetime-local" value="9999-01-01T00:00" id="end"><label for="end">end time</label><br>
@@ -49,6 +50,7 @@
         </div>-->
     <br><br>
     <button onclick="createHeatmap()">Create heatmap</button>
+    <script src="../config.js"></script>
     <script type="module" src="./main.js"></script>
     <!--<script src="./gif.js"></script>-->
 </body>

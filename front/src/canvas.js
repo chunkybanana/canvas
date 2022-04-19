@@ -1,5 +1,5 @@
 // Compiled TypeScript.
-function responsiveCanvas(width, height, container) {
+export default function responsiveCanvas(width, height, container) {
     var innerHeight = () => (container === null || container === void 0 ? void 0 : container.clientHeight) || window.innerHeight;
     var innerWidth = () => (container === null || container === void 0 ? void 0 : container.clientWidth) || window.innerWidth;
     var canvas = document.createElement('canvas');

@@ -1,5 +1,8 @@
 import { GIFEncoder } from 'https://unpkg.com/gifenc@1.0.3'
 
+w.value ||= window.config.size;
+h.value ||= window.config.size;
+
 //let setText = text => document.getElementById('log').innerText = text;
 
 const palette = [[163,23,23],[252,0,0],[253,165,0],[254,215,0],[200,240,129],[41,242,34],[26,174,0],[64,224,208],[30,144,255],[8,0,255],[134,1,154],[238,70,238],[239,192,203],[0,0,0],[85,85,85],[204,204,204],[255,255,255],[106,61,24],[251,220,188],[30,190,114],[68,102,161],[0,64,141],[114,137,218],[253,154,255]]
@@ -23,20 +26,28 @@ window.makeTimelapse = () => {
         let delay = Math.round(100 / framerate.value) * 10;
 
 
+        let prolog = log.filter(({time}) => time < startEpoch);
+
+
+        for(let {X, Y, color} of prolog) {
+            for(let _x = 0; _x < size; _x++) {
+                for(let _y = 0; _y < size; _y++) {
+                    data[(Y * size + _y) * width * size + (X * size + _x)] = color;
+                }
+            }
+        }
+                    
+
         log = log.filter(({X, Y, color, time}) => X >= x && X < x + width && Y >= y && Y < y + height && time >= startEpoch && time <= endEpoch && X === X);
 
         for(let i = 0, offset = 0; i < log.length; i += speed, offset += speed) {
-            /*if(offset > log.length / 100) {
-                console.log('updating timer', i / log.length * 100)
-                offset = 0;
-                setTimeout(() => $('fill').style.width = ((i / log.length) * 600).toFixed(2) + 'px', 1)
-                //$('text').innerText = `${(i / log.length * 100).toFixed(2)}%`;
-            }*/
+            // Would put a progress bar here, but it takes ages to update
+            // And I don't want to use web workers
             for(let j = 0; j < speed && i + j < log.length; j++){
                 let {X, Y, color} = log[i + j];
                 for(let _y = 0; _y < size; _y++) {
                     for(let _x = 0; _x < size; _x++) {
-                        data[(Y * size + _y) * width * size + (X * size + _x)] = color;
+                        data[((Y - y) * size + _y) * width * size + ((X - x) * size + _x)] = color;
                     }
                 }
             }
@@ -64,7 +75,7 @@ window.createHeatmap = () => {
             .map(([x, y, color]) => ({x: parseInt(x), y: parseInt(y), color: parseInt(color)}))
             .filter(({x, y, color}) => x == x && y === y && color === color);
 
-        let data = Array(128).fill(0).map(a => Array(128).fill(0));
+        let data = Array(config.size).fill(0).map(a => Array(config.size).fill(0));
   
   		for (let {x, y, color} of log) {
             data[y][x]++;
@@ -73,8 +84,8 @@ window.createHeatmap = () => {
         let max = Math.max(...data.map(v => Math.max(...v)));
 
         let canvas = document.createElement('canvas');
-        canvas.width = 128;
-        canvas.height = 128;
+        canvas.width = config.size;
+        canvas.height = config.size;
         let ctx = canvas.getContext('2d')
 
         for (let y in data) {

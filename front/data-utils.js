@@ -40,4 +40,9 @@ if (typeof module !== 'undefined' && module.exports) module.exports = {
     decodeMessage,
     formatData,
     decodeData
-};
+}; else {
+    window.formatMessage = formatMessage;
+    window.decodeMessage = decodeMessage;
+    window.formatData = formatData;
+    window.decodeData = decodeData;
+}

@@ -1,18 +1,16 @@
-var r_ws = require("ws");
+let r_ws = require("ws");
 const { program } = require('commander');
 const fs = require('fs')
 var {formatData, decodeMessage} = require("./front/data-utils");
+let {port, size, delay} = require('./front/config');
 
-let port = 8080;
 let log, logs = [], data;
-
-
 
 program
     .option('-l, --log <file>', 'log file')
     .option('-b, --backup <file>', 'backup the canvas state to a file every minute')
     .option('-L, --load <file>', 'load the canvas state from a file')
-    .option('-p, --port <port>','Websocket port', 8080)
+    .option('-p, --port <port>','Websocket port', port)
     .option('-s, --stdout', 'log to stdout')
     .option('-e, --stderr', 'log to stderr')
     .action((options) => {
@@ -37,9 +35,9 @@ program
     }) 
 program.parse();
 
-var ws = new r_ws.Server({port: port});
+var ws = new r_ws.Server({ port });
 
-data ||= Array(128).fill(0).map(() => Array(128).fill(16)) 
+data ||= Array(size).fill(0).map(() => Array(size).fill(16)) 
 
 let conns = [];
 
@@ -60,7 +58,7 @@ ws.on('connection', (conn) => {
         try {
             decoded = JSON.parse(message)
             if ('d' in decoded) {
-                if(Date.now() - lastMessage > 2500) {
+                if(Date.now() - lastMessage > delay) {
                     lastMessage = Date.now();
                     const {x, y, color} = decodeMessage(parseInt(decoded.d));
                     if (log) {
@@ -75,10 +73,12 @@ ws.on('connection', (conn) => {
                         }
                     }
                     data[y][x] = color;
-                } else if (Date.now() - lastMessage < 1000){
+                } 
+                // This was a fun option but in the end it's just been annoying for slow connections.
+                /* else if (Date.now() - lastMessage < delay * 2 / 5){
                     // Rickroll
                     conn.send(JSON.stringify({"e": "r"}))
-                }
+                } */
                 
             } // Add more support here
         } catch(e) {

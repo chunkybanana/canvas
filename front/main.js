@@ -1,63 +1,57 @@
-const COLORS = ["#a31717","#fc0000","#fda500","#fed700","#c8f081","#29f222","#1aae00","#40e0d0","#1e90ff","#0800ff","#86019a","#ee46ee","#efc0cb","#000","#555","#ccc","#fff","#6a3d18","#fbdcbc","#1ebe72","#4466a1","#00408d","#7289da","#fd9aff"];
+/* Most of the code below is written in ES6 modules
+ * But some (specifically, data processing and config) can't be 
+ * for node.js compatibility
+ * Hence, this has ended up as a cursed mixture of the two 
+ * that I can't and won't fix.
+ */
 
+import initScroller from './src/scroller/wrapper.js';
+import initStats from './src/stats.js';
+import responsiveCanvas from './src/canvas.js';
+
+let stats = initStats();
+
+const COLORS = config.colors;
+const SIZE = config.size;
+
+// For ios safari. This has to be done before the canvas is created
 document.getElementById('canvas-container').style.height = `${window.innerHeight - 60}px`;
 
-// Canvas that stuff is displayed on
-// TODO: Adapt x and y to true coordinates relative to internal canvas
-// I would make this canvas resizable but that's *more* work
 const displayCanvas = responsiveCanvas(1024, 1024, document.getElementById("canvas-container"));
 displayCanvas.id = "canvas";
 const displayCtx = displayCanvas.getContext("2d");
+displayCtx.imageSmoothingEnabled = false;
 
-// I got tired of toggling settings, so change these for local / serverless hosting
-const LOCAL = false;
-const SERVER = true;
-
-const SIZE = 128;
 
 // Canvas that is drawn on
 const canvas = document.createElement('canvas');
 canvas.width = canvas.height = SIZE;
 const ctx = canvas.getContext("2d");
-displayCtx.imageSmoothingEnabled = false;
 ctx.imageSmoothingEnabled = false;
+ctx.fillStyle = "white";
+ctx.fillRect(0, 0, SIZE, SIZE);
 
-let data = Array(SIZE).fill(0).map(() => Array(SIZE).fill(16));
+window.showModal = (elem, bool) => (typeof elem == "string" ? document.getElementById(elem) : elem).style.display = bool ? "block" : "none";
+
+window.updateStats = stats.update;
 
 // For checking whether the mouse has moved
 let dx = 0, dy = 0
 
-
-ctx.fillStyle = "#ccc";
-ctx.fillRect(0, 0, SIZE + 40, SIZE + 40);
-ctx.fillStyle = "white";
-ctx.fillRect(0, 0, SIZE, SIZE);
+let data = Array(SIZE).fill(0).map(() => Array(SIZE).fill(16));
 
 const buttons = document.getElementById("buttons");
 const timer = document.getElementById("timer");
 const toggle = document.getElementById("toggle");
 // WHYY, firefox
 if(!toggle.checked) toggle.click();
+
 let place = true;
 
-// Which iteration of the canvas are we on? 1-indexed + hardcoded.
-const iteration = 2;
-let stats;
-try {
-    stats = (JSON.parse(localStorage.getItem("stats")) || Array(iteration).fill(0).map(()=>({})))
-    .map(v => COLORS.forEach(c => v[c] ||= 0) || v);
-} catch(e){
-    console.error(e)
-    console.log('Stats not found');
-}
-// Don't worry, ws is initialized later
-var ws;
-
-let lastClick = 0;
-let drawColor = 'black';
+let lastClick = 0, drawColor = 'black';
 
 
-let recievedData, playerCount;
+let playerCount, ws;
 
 let reflow = () => {
     document.getElementById('canvas-container').style.height = `${window.innerHeight - 60}px`;
@@ -65,12 +59,13 @@ let reflow = () => {
 
     displayCanvas.resize();
 }
+window.addEventListener('resize', reflow);
+
 
 let zoom = {
     left: 0, top: 0, zoom: 1
 };
 
-window.addEventListener('resize', reflow);
 
 let updateDisplay = () => {
     displayCtx.clearRect(0, 0, 1024, 1024);
@@ -101,25 +96,7 @@ let render = (data) =>  {
 
 
 // Initialize Scroller
-let scroller = new Scroller((left, top, z) => {
-    zoom = {left, top, z};
-    updateDisplay();
-}, {
-	zooming: true,
-    bouncing: false,
-    minZoom: 1,
-    // Placing tiny pixels on mobile is *hard*.
-    maxZoom: 12,
-});
-
-scroller.setDimensions(parseInt(displayCanvas.style.width), parseInt(displayCanvas.style.height), parseInt(displayCanvas.style.width), parseInt(displayCanvas.style.height));
-
-scroller.setPosition(
-   (window.innerWidth - Math.min((window.innerHeight - 60), window.innerWidth)) / 2,
-    (window.innerHeight - Math.min((window.innerHeight - 60), window.innerWidth) - 60) / 2
-);
-
-handleScroller(displayCanvas, document, scroller, updateDisplay)
+let scroller = initScroller(updateDisplay, x => zoom = x, displayCanvas, document)
 
 // Dynamic button generation go brr
 for (let color of COLORS) {
@@ -137,9 +114,6 @@ for (let color of COLORS) {
 }
 buttons.childNodes[13].click();
 
-// WHYYY, mobile debugging
-//alert(getComputedStyle(document.getElementById('canvas-container')).height + ' ' + window.innerHeight)
-
 let startCountdown = () => {
     let time = Date.now() - lastClick;
     timer.style.display = "block";
@@ -156,55 +130,26 @@ let startCountdown = () => {
     setTimeout(startCountdown, 20);
 }
 
-let showModal = (elem, bool) => {
-    (typeof elem == 'string' ? document.getElementById(elem) : elem).style.display = bool ? "block" : "none";
-}
-
-let updateStats = () => {
-    let placedPixels = document.getElementById("placed-pixels");
-    let totalPixels = document.getElementById("total-pixels");
-
-    placedPixels.innerText = Object.values(stats[iteration - 1]).reduce((a, b) => a + b, 0)
-    totalPixels.innerText = stats.flatMap(stat => Object.values(stat)).reduce((a, b) => a + b, 0)
-
-    let colourCounts = {};
-    for (let color of COLORS) {
-        for (let stat of stats) {
-            colourCounts[color] = (colourCounts[color] || 0) + stat[color];
-        }
-    }
-
-    let sortedColours = Object.entries(colourCounts).sort((a, b) => b[1] - a[1]);
-    let topColours = sortedColours.slice(0, 5);
-    
-    let topColour = document.getElementById("favorite-colors");
-
-    topColour.innerHTML = "";
-
-    for (let [color, count] of topColours) {
-        let li = document.createElement("li");
-        let span = document.createElement("span");
-        span.style.backgroundColor = color;
-        span.style.color = "#888";
-        span.innerHTML = `&nbsp;`.repeat(5);
-        li.appendChild(span);
-
-        let text = document.createElement("span");
-        text.innerHTML = `&times;${count}`;
-        li.appendChild(text);
-
-        topColour.appendChild(li);
-    }
-
-    localStorage.setItem("stats", JSON.stringify(stats));
-}
-
-let downloadPNG = () => {
+window.downloadPNG = () => {
     var link = document.createElement('a');
     link.download = `canvas.png`;
     link.href = canvas.toDataURL('png');
     link.click();
 }
+
+displayCanvas.addEventListener('contextmenu', event => {
+    event.preventDefault();
+    let canvasSize = parseInt(displayCanvas.style.width);
+    let s = (canvasSize / SIZE);
+    let x = Math.floor((displayCanvas.x / 8 + zoom.left / s) / zoom.z), 
+        y = Math.floor((displayCanvas.y / 8 + zoom.top / s) / zoom.z);
+
+    
+    if (displayCanvas.x < 1024 && displayCanvas.y > 0
+        && displayCanvas.y < 1024 && displayCanvas.x > 0) {
+        buttons.childNodes[data[y][x]].click();
+    }
+});
 
 // These event listeners bubble in weird orders.
 displayCanvas.addEventListener('pointerdown', (event) => {
@@ -221,7 +166,7 @@ displayCanvas.addEventListener('pointerup', (event) => {
         y = Math.floor((displayCanvas.y / 8 + zoom.top / s) / zoom.z);
     if (
         // Server handling
-        (!SERVER || (navigator.onLine && ws.readyState == 1)) &&
+        (!config.server || (navigator.onLine && ws.readyState == 1)) &&
         // Timing and disabling    
         place && Date.now() - lastClick > 2500 
         // Within bounds
@@ -242,8 +187,8 @@ displayCanvas.addEventListener('pointerup', (event) => {
         }
         drawRect(x, y, drawColor);
         updateDisplay();
-        stats[iteration - 1][drawColor]++;
-        updateStats();
+        stats[config.iteration - 1][drawColor]++;
+        stats.update();
         ws.send(JSON.stringify({
             d: formatMessage(x, y, COLORS.indexOf(drawColor)).toString()
         }));
@@ -252,7 +197,6 @@ displayCanvas.addEventListener('pointerup', (event) => {
 
 
 window.addEventListener('keypress', () => {
-    console.log(displayCanvas.keys)
     if (displayCanvas.keys.c) {
         toggle.click();
     }
@@ -262,13 +206,11 @@ toggle.addEventListener('click', () => {
     place = !place
 })
 
-updateCount = () => document.getElementById('player-count').innerText = playerCount;
+let updateCount = () => document.getElementById('player-count').innerText = playerCount;
 
 var start_ws = () => {
-    ws = new WebSocket(LOCAL ? "ws://localhost:8080" : "wss://canvas.rto.run/ws");
-    ws.onopen = () => {
-        recievedData = false;
-    }
+    ws = new WebSocket(config.local ? "ws://localhost:8080" : "wss://canvas.rto.run/ws");
+    ws.onopen = () => {}
 
     ws.onmessage = message => {
         ((data) => {
@@ -306,7 +248,7 @@ var start_ws = () => {
 
 
 
-if (SERVER) {
+if (config.server) {
     start_ws()
 } else {
     // Avoid errors while doing nothing

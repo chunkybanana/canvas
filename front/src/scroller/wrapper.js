@@ -1,7 +1,29 @@
-// Wrapper to yeet boilerplate out of main.js
-let handleScroller = (displayCanvas, document, scroller, updateDisplay) => {
+import Scroller from './Scroller.js';
 
-    displayCanvas.addEventListener("touchstart", function(e) {
+let initScroller = (updateDisplay, setZoom, canvas, document) => {
+    let scroller = new Scroller((left, top, z) => {
+        setZoom({left, top, z});
+        updateDisplay();
+    }, {
+        zooming: true,
+        bouncing: false,
+        minZoom: 1,
+        // Placing tiny pixels on mobile is *hard*.
+        maxZoom: 12,
+    });
+
+    
+    let canvasSize = parseInt(canvas.style.width);
+
+    scroller.setDimensions(canvasSize, canvasSize, canvasSize, canvasSize);
+    
+    scroller.setPosition(
+        (window.innerWidth - Math.min((window.innerHeight - 60), window.innerWidth)) / 2,
+         (window.innerHeight - Math.min((window.innerHeight - 60), window.innerWidth) - 60) / 2
+    );
+        
+
+    canvas.addEventListener("touchstart", function(e) {
         // Don't react if initial down happens on a form element
         if (e.touches[0] && e.touches[0].target && e.touches[0].target.tagName.match(/input|textarea|select/i)) {
             return;
@@ -25,7 +47,7 @@ let handleScroller = (displayCanvas, document, scroller, updateDisplay) => {
 
     var mousedown = false;
 
-    displayCanvas.addEventListener("mousedown", function(e) {
+    canvas.addEventListener("mousedown", function(e) {
         if (e.target.tagName.match(/input|textarea|select/i)) {
             return;
         }
@@ -61,12 +83,12 @@ let handleScroller = (displayCanvas, document, scroller, updateDisplay) => {
         mousedown = false;
     }, false);
 
-    displayCanvas.addEventListener("wheel", function(e) {
+    canvas.addEventListener("wheel", function(e) {
         scroller.doMouseZoom((e.detail ? (e.detail * -120) : e.wheelDelta) * -15, e.timeStamp, e.pageX, e.pageY);
     }, false);
 
     window.addEventListener('keydown', () => {
-        let DIST = 10, keys = displayCanvas.keys;
+        let DIST = 10, keys = canvas.keys;
         if (keys.ArrowUp || keys.w) {
             scroller.scrollBy(0, -DIST, true);
             updateDisplay();
@@ -97,4 +119,8 @@ let handleScroller = (displayCanvas, document, scroller, updateDisplay) => {
             updateDisplay();
         }
     })
+
+    return scroller;
 }
+
+export default initScroller;
