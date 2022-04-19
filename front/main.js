@@ -168,7 +168,7 @@ displayCanvas.addEventListener('pointerup', (event) => {
         // Server handling
         (!config.server || (navigator.onLine && ws.readyState == 1)) &&
         // Timing and disabling    
-        place && Date.now() - lastClick > 2500 
+        place && Date.now() - lastClick > config.delay * 1000
         // Within bounds
         && displayCanvas.x < 1024 && displayCanvas.y > 0
         && displayCanvas.y < 1024 && displayCanvas.x > 0

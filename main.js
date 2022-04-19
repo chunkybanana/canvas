@@ -58,7 +58,7 @@ ws.on('connection', (conn) => {
         try {
             decoded = JSON.parse(message)
             if ('d' in decoded) {
-                if(Date.now() - lastMessage > delay) {
+                if(Date.now() - lastMessage > delay * 1000) {
                     lastMessage = Date.now();
                     const {x, y, color} = decodeMessage(parseInt(decoded.d));
                     if (log) {
