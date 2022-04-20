@@ -82,6 +82,7 @@ let updateDisplay = () => {
 let drawRect = (x, y, color) => {
     ctx.fillStyle = color;
     ctx.fillRect(x, y, 1, 1)
+    console.log(y, x)
     data[y][x] = COLORS.indexOf(color)
 }
 
@@ -117,7 +118,7 @@ buttons.childNodes[13].click();
 let startCountdown = () => {
     let time = Date.now() - lastClick;
     timer.style.display = "block";
-    if (time > 2500) {
+    if (time > config.delay * 1000) {
         timer.textContent = "";
         timer.style.display = "none";
         for(let button of buttons.childNodes) {
@@ -126,7 +127,7 @@ let startCountdown = () => {
         canvas.disabled = false;
         return;
     }
-    timer.textContent = ((2500 - time) / 1000).toFixed(2);
+    timer.textContent = (config.delay - time / 1000).toFixed(2);
     setTimeout(startCountdown, 20);
 }
 
@@ -215,7 +216,7 @@ var start_ws = () => {
     ws.onmessage = message => {
         ((data) => {
             if ('d' in data) {
-                var {x, y, color} = decodeMessage(parseInt(data.d))
+                var {x, y, color} = decodeMessage(data.d);
                 drawRect(x, y, COLORS[color]);
                 updateDisplay();
             }

@@ -2,9 +2,9 @@ let r_ws = require("ws");
 const { program } = require('commander');
 const fs = require('fs')
 var {formatData, decodeMessage} = require("./front/data-utils");
-let {port, size, delay} = require('./front/config');
+let {port, size, delay, framesToSave} = require('./front/config');
 
-let log, logs = [], data;
+let log, logs = [], data, savedata, backup;
 
 program
     .option('-l, --log <file>', 'log file')
@@ -15,9 +15,7 @@ program
     .option('-e, --stderr', 'log to stderr')
     .action((options) => {
         if (options.backup) {
-            setInterval(() => {
-                fs.writeFileSync(options.backup, JSON.stringify(data));
-            }, 60000)
+            backup = options.backup;
         }
         if (options.load) {
             data = JSON.parse(fs.readFileSync(options.load));
@@ -38,6 +36,8 @@ program.parse();
 var ws = new r_ws.Server({ port });
 
 data ||= Array(size).fill(0).map(() => Array(size).fill(16)) 
+
+savedata = structuredClone(data);
 
 let conns = [];
 
@@ -60,15 +60,21 @@ ws.on('connection', (conn) => {
             if ('d' in decoded) {
                 if(Date.now() - lastMessage > delay * 1000) {
                     lastMessage = Date.now();
-                    const {x, y, color} = decodeMessage(decoded.d.toString());
+                    let {x, y, color} = decodeMessage(decoded.d.toString());
                     if (log) {
                         if(typeof log == "function") {
                             log(`${x} ${y} ${color} ${Date.now()} `)
                         } else {
                             logs.push(`${x} ${y} ${color} ${Date.now()} `);
-                            if(logs.length > 100) {
+                            if(logs.length >= config.framesToSave) {
                                 fs.appendFileSync(log, logs.join("\n") + '\n');
+                                // Only update the savedata when updating the data as well
+                                for(let log of logs){
+                                    let [x, y, color] = log.split` `.map(Number);
+                                    savedata[y][x] = color;
+                                }
                                 logs = [];
+                                fs.writeFileSync(backup, JSON.stringify(savedata));
                             }
                         }
                     }
@@ -82,7 +88,7 @@ ws.on('connection', (conn) => {
                 
             } // Add more support here
         } catch(e) {
-            return;
+            console.error(e)
         }
         // Eventually we should turn this into a tick-based event loop
         // But for now, just propagate it.

@@ -7,6 +7,7 @@ const config = {
     delay: 2,
     iteration: 3,
     maxZoom: 20,
+    framesToSave: 100,
 }
 
 globalThis.config = config;

@@ -3,7 +3,7 @@ let formatMessage = (x, y, color) => {
 }
 
 let decodeMessage = (message) => {
-    let [x, y, color] = message.split`,`.map(Number);
+    let [x, y, color] = message.toString().split`,`.map(Number);
     return {x, y, color}
 }
 let formatData = (data) => {
