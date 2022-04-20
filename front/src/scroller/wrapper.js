@@ -9,7 +9,7 @@ let initScroller = (updateDisplay, setZoom, canvas, document) => {
         bouncing: false,
         minZoom: 1,
         // Placing tiny pixels on mobile is *hard*.
-        maxZoom: 12,
+        maxZoom: window.config.maxZoom,
     });
 
     

@@ -1,24 +1,10 @@
-/* ENCODING CONVENTION 
-  - Message:
-
-  0b111111111111111111
-    [  ][     ][     ]
-    color  x      y 
-
-    - Data:
-    String of length 128^2 with characters A-X+
-*/
-
 let formatMessage = (x, y, color) => {
-    return color << 14 | x << 7 | y;
+    return [x, y, color].join`,`;
 }
 
 let decodeMessage = (message) => {
-    return {
-        y: message & 0x7F,
-        x: message >> 7 & 0x7F,
-        color: message >> 14
-    }
+    let [x, y, color] = message.split`,`.map(Number);
+    return {x, y, color}
 }
 let formatData = (data) => {
     // Generates a human-readable string so you can sorta see what's going on. Starts at A so you can spell AMOGUS in the server logs.

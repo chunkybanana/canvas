@@ -39,14 +39,15 @@ let updateStats = (stats) => {
 let initStats = () => {
     let stats;
     try {
-        stats = (JSON.parse(localStorage.getItem("stats")) || Array(config.iteration).fill(0).map(()=>({})))
-        .map(v => config.colors.forEach(c => v[c] ||= 0) || v);
+        stats = (JSON.parse(localStorage.getItem("stats")))
     } catch(e){
-        console.error(e)
-        console.log('Stats not found');
-
-        stats = Array(config.iteration).fill(0).map(()=>({}))
-        .map(v => config.colors.forEach(c => v[c] ||= 0) || v);
+        stats = Array(config.iteration)
+    }
+    for(let i = 0; i < config.iteration; i++) {
+        stats[i] ||= {};
+        for(let color of config.colors) {
+            stats[i][color] ??= 0;
+        }
     }
     stats.update = updateStats.bind(null, stats)
     return stats;

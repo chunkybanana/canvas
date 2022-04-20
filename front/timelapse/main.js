@@ -1,4 +1,5 @@
 import { GIFEncoder } from 'https://unpkg.com/gifenc@1.0.3'
+import historicPalettes from './historic.js';
 
 w.value ||= window.config.size;
 h.value ||= window.config.size;
@@ -51,7 +52,8 @@ window.makeTimelapse = () => {
                     }
                 }
             }
-            gif.writeFrame(data, width * size, height * size, {palette, delay})
+            gif.writeFrame(data, width * size, height * size, 
+                {palette: historicPalettes[config.iteration - 1] ?? palette, delay})
         }
 
 

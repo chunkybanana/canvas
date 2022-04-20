@@ -60,7 +60,7 @@ ws.on('connection', (conn) => {
             if ('d' in decoded) {
                 if(Date.now() - lastMessage > delay * 1000) {
                     lastMessage = Date.now();
-                    const {x, y, color} = decodeMessage(parseInt(decoded.d));
+                    const {x, y, color} = decodeMessage(decoded.d.toString());
                     if (log) {
                         if(typeof log == "function") {
                             log(`${x} ${y} ${color} ${Date.now()} `)

@@ -141,8 +141,8 @@ displayCanvas.addEventListener('contextmenu', event => {
     event.preventDefault();
     let canvasSize = parseInt(displayCanvas.style.width);
     let s = (canvasSize / SIZE);
-    let x = Math.floor((displayCanvas.x / 8 + zoom.left / s) / zoom.z), 
-        y = Math.floor((displayCanvas.y / 8 + zoom.top / s) / zoom.z);
+    let x = Math.floor((displayCanvas.x * SIZE / 1024 + zoom.left / s) / zoom.z), 
+        y = Math.floor((displayCanvas.y * SIZE / 1024 + zoom.top / s) / zoom.z);
 
     
     if (displayCanvas.x < 1024 && displayCanvas.y > 0
@@ -162,8 +162,8 @@ displayCanvas.addEventListener('pointerup', (event) => {
 
     let canvasSize = parseInt(displayCanvas.style.width);
     let s = (canvasSize / SIZE);
-    let x = Math.floor((displayCanvas.x / 8 + zoom.left / s) / zoom.z), 
-        y = Math.floor((displayCanvas.y / 8 + zoom.top / s) / zoom.z);
+    let x = Math.floor((displayCanvas.x * SIZE / 1024 + zoom.left / s) / zoom.z), 
+        y = Math.floor((displayCanvas.y * SIZE / 1024 + zoom.top / s) / zoom.z);
     if (
         // Server handling
         (!config.server || (navigator.onLine && ws.readyState == 1)) &&
