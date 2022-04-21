@@ -6,7 +6,9 @@ h.value ||= window.config.size;
 
 //let setText = text => document.getElementById('log').innerText = text;
 
-const palette = [[163,23,23],[252,0,0],[253,165,0],[254,215,0],[200,240,129],[41,242,34],[26,174,0],[64,224,208],[30,144,255],[8,0,255],[134,1,154],[238,70,238],[239,192,203],[0,0,0],[85,85,85],[204,204,204],[255,255,255],[106,61,24],[251,220,188],[30,190,114],[68,102,161],[0,64,141],[114,137,218],[253,154,255]]
+let hextorgb = hex => hex.match(/[0-9a-f]{2}/g).map(x => parseInt(x, 16));
+
+const palette = config.colors.map(hextorgb)
 
 window.makeTimelapse = () => {
     let iteration = document.getElementById('iteration').value;
@@ -19,7 +21,10 @@ window.makeTimelapse = () => {
 
         let $ = (id) => document.getElementById(id);
 
-        let x = +$('x').value, y = +$('y').value, width = +$('w').value, height = +$('h').value, speed = +$('speed').value, size = +$('size').value;
+        let x = +$('x').value, y = +$('y').value, 
+        width = Math.min(+$('w').value, historicPalettes[iteration - 1]?.s),
+        height = Math.min(+$('h').value, historicPalettes[iteration - 1]?.s), 
+        speed = +$('speed').value, size = +$('size').value;
 
         let startEpoch = new Date($('start').value).getTime(), endEpoch = new Date($('end').value).getTime();
 
@@ -43,7 +48,7 @@ window.makeTimelapse = () => {
 
         for(let i = 0, offset = 0; i < log.length; i += speed, offset += speed) {
             // Would put a progress bar here, but it takes ages to update
-            // And I don't want to use web workers
+            // And I don't want to use weeb workers
             for(let j = 0; j < speed && i + j < log.length; j++){
                 let {X, Y, color} = log[i + j];
                 for(let _y = 0; _y < size; _y++) {
@@ -53,9 +58,8 @@ window.makeTimelapse = () => {
                 }
             }
             gif.writeFrame(data, width * size, height * size, 
-                {palette: historicPalettes[config.iteration - 1] ?? palette, delay})
+                {palette: historicPalettes[iteration - 1]?.p ?? palette, delay})
         }
-
 
         gif.finish();
 
