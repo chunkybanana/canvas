@@ -2,7 +2,7 @@ let r_ws = require("ws");
 const { program } = require('commander');
 const fs = require('fs')
 var {formatData, decodeMessage} = require("./front/data-utils");
-let {port, size, delay, framesToSave} = require('./front/config');
+let {port, size, delay, framesToSave, background} = require('./front/config');
 
 let log, logs = [], data, savedata, backup;
 
@@ -35,7 +35,7 @@ program.parse();
 
 var ws = new r_ws.Server({ port });
 
-data ||= Array(size).fill(0).map(() => Array(size).fill(16)) 
+data ||= Array(size).fill(0).map(() => Array(size).fill(background)) 
 
 savedata = structuredClone(data);
 
@@ -66,7 +66,7 @@ ws.on('connection', (conn) => {
                             log(`${x} ${y} ${color} ${Date.now()} `)
                         } else {
                             logs.push(`${x} ${y} ${color} ${Date.now()} `);
-                            if(logs.length >= config.framesToSave) {
+                            if(logs.length >= framesToSave) {
                                 fs.appendFileSync(log, logs.join("\n") + '\n');
                                 // Only update the savedata when updating the data as well
                                 for(let log of logs){

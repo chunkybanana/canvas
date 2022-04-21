@@ -38,7 +38,7 @@ window.updateStats = stats.update;
 // For checking whether the mouse has moved
 let dx = 0, dy = 0
 
-let data = Array(SIZE).fill(0).map(() => Array(SIZE).fill(16));
+let data = Array(SIZE).fill(0).map(() => Array(SIZE).fill(config.background));
 
 const buttons = document.getElementById("buttons");
 const timer = document.getElementById("timer");
@@ -112,7 +112,7 @@ for (let color of COLORS) {
     });
     buttons.appendChild(button);
 }
-buttons.childNodes[13].click();
+buttons.childNodes[config.defaultSelected].click();
 
 let startCountdown = () => {
     let time = Date.now() - lastClick;
@@ -139,17 +139,16 @@ window.downloadPNG = () => {
 
 displayCanvas.addEventListener('contextmenu', event => {
     event.preventDefault();
-    let canvasSize = parseInt(displayCanvas.style.width);
-    let s = (canvasSize / SIZE);
-    let x = Math.floor((displayCanvas.x * SIZE / 1024 + zoom.left / s) / zoom.z), 
-        y = Math.floor((displayCanvas.y * SIZE / 1024 + zoom.top / s) / zoom.z);
-
-    
     if (displayCanvas.x < 1024 && displayCanvas.y > 0
         && displayCanvas.y < 1024 && displayCanvas.x > 0) {
-        buttons.childNodes[data[y][x]].click();
+        buttons.childNodes[data[y()][x()]].click();
     }
 });
+
+let getTruePos = (relative, offset) =>  (relative * SIZE / 1024 + offset / (parseInt(displayCanvas.style.width) / SIZE)) / zoom.z | 0
+
+let x = () => getTruePos(displayCanvas.x, zoom.left);
+let y = () => getTruePos(displayCanvas.y, zoom.top);
 
 // These event listeners bubble in weird orders.
 displayCanvas.addEventListener('pointerdown', (event) => {
@@ -159,11 +158,6 @@ displayCanvas.addEventListener('pointerdown', (event) => {
 })
 
 displayCanvas.addEventListener('pointerup', (event) => {
-
-    let canvasSize = parseInt(displayCanvas.style.width);
-    let s = (canvasSize / SIZE);
-    let x = Math.floor((displayCanvas.x * SIZE / 1024 + zoom.left / s) / zoom.z), 
-        y = Math.floor((displayCanvas.y * SIZE / 1024 + zoom.top / s) / zoom.z);
     if (
         // Server handling
         (!config.server || (navigator.onLine && ws.readyState == 1)) &&
@@ -176,7 +170,7 @@ displayCanvas.addEventListener('pointerup', (event) => {
         && (dx == event.clientX && dy == event.clientY 
             || (dy == 0 && dx == 0))
         // Not redrawing
-        && data[y][x] != COLORS.indexOf(drawColor)
+        && data[y()][x()] != COLORS.indexOf(drawColor)
     ) {
         lastClick = Date.now();
 
@@ -185,15 +179,24 @@ displayCanvas.addEventListener('pointerup', (event) => {
             button.disabled = true;
             displayCanvas.disabled = true;
         }
-        drawRect(x, y, drawColor);
+        drawRect(x(), y(), drawColor);
         updateDisplay();
         stats[config.iteration - 1][drawColor]++;
         stats.update();
         ws.send(JSON.stringify({
-            d: formatMessage(x, y, COLORS.indexOf(drawColor)).toString()
+            d: formatMessage(x(), y(), COLORS.indexOf(drawColor)).toString()
         }));
     }
 })
+
+let showCoords = () => {
+    let clamp = pos => Math.min(Math.max(pos, 0), SIZE - 1);
+    document.getElementById('coords').innerText = `(${clamp(x())}, ${clamp(y())})`;
+}
+
+window.addEventListener('pointerup', showCoords);
+window.addEventListener('pointermove', showCoords);
+window.addEventListener('pointerdown', showCoords);
 
 
 window.addEventListener('keypress', () => {
