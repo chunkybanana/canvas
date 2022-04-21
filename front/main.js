@@ -82,7 +82,6 @@ let updateDisplay = () => {
 let drawRect = (x, y, color) => {
     ctx.fillStyle = color;
     ctx.fillRect(x, y, 1, 1)
-    console.log(y, x)
     data[y][x] = COLORS.indexOf(color)
 }
 
