@@ -84,7 +84,7 @@ let initScroller = (updateDisplay, setZoom, canvas, document) => {
     }, false);
 
     canvas.addEventListener("wheel", function(e) {
-        scroller.doMouseZoom((e.detail ? (e.detail * -120) : e.wheelDelta) * -15, e.timeStamp, e.pageX, e.pageY);
+        scroller.doMouseZoom((e.detail ? (e.detail * -120) : e.wheelDelta) * -config.maxZoom * 1.5, e.timeStamp, e.pageX, e.pageY);
     }, false);
 
     window.addEventListener('keydown', () => {

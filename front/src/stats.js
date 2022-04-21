@@ -40,7 +40,8 @@ let initStats = () => {
     let stats;
     try {
         stats = (JSON.parse(localStorage.getItem("stats")))
-    } catch(e){
+    } catch (e) {}
+    if (!stats || !stats.length) {
         stats = Array(config.iteration)
     }
     for(let i = 0; i < config.iteration; i++) {

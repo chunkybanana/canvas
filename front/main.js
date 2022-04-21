@@ -94,9 +94,23 @@ let render = (data) =>  {
     updateDisplay();
 }
 
+let updatePos = () => {
+    sessionStorage.setItem('pos', JSON.stringify({...zoom, drawColor}))
+}
 
 // Initialize Scroller
-let scroller = initScroller(updateDisplay, x => zoom = x, displayCanvas, document)
+let scroller = initScroller(updateDisplay, x => {
+    zoom = x;
+    updatePos();
+}, displayCanvas, document)
+
+if (sessionStorage.getItem('pos')) {
+    zoom = JSON.parse(sessionStorage.getItem('pos'));
+    let {z, top, left, color} = zoom;
+    drawColor = color;
+    scroller.zoomTo(z);
+    scroller.scrollTo(left, top);
+}
 
 // Dynamic button generation go brr
 for (let color of COLORS) {

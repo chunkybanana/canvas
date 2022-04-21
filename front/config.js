@@ -1,5 +1,5 @@
 const config = {
-    server: true,
+    server: false,
     local: true,
     size: 192,
     port: 8080,
