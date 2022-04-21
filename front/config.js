@@ -1,6 +1,6 @@
 const config = {
     server: true,
-    local: true,
+    local: false,
     size: 192,
     port: 8080,
     colors: [
