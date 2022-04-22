@@ -60,7 +60,10 @@ ws.on('connection', (conn) => {
             if ('d' in decoded) {
                 if(Date.now() - lastMessage > delay * 1000) {
                     lastMessage = Date.now();
+                    if(!/\d+,\d+,\d+/.test(message.d)) return;
                     let {x, y, color} = decodeMessage(decoded.d.toString());
+                    if(x < 0 || x >= size || y < 0 || y >= size) return;
+                    if(!(color in config.colors)) return;
                     if (log) {
                         if(typeof log == "function") {
                             log(`${x} ${y} ${color} ${Date.now()} `)

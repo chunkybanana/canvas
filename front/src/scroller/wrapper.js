@@ -15,16 +15,21 @@ let initScroller = (updateDisplay, setZoom, canvas, document) => {
     
     let canvasSize = parseInt(canvas.style.width);
 
-    scroller.setDimensions(canvasSize, canvasSize, canvasSize, canvasSize);
-    
-    scroller.setPosition(
-        (window.innerWidth - Math.min((window.innerHeight - 60), window.innerWidth)) / 2,
-         (window.innerHeight - Math.min((window.innerHeight - 60), window.innerWidth) - 60) / 2
-    );
+    let onresize = () => {
+        scroller.setDimensions(canvasSize, canvasSize, canvasSize, canvasSize);
         
+        // Scroller is on the canvas
+        scroller.setPosition(
+            (window.innerWidth - Math.min((window.innerHeight - 60), window.innerWidth)) / 2,
+            (window.innerHeight - Math.min((window.innerHeight - 60), window.innerWidth) - 60) / 2
+        );
+    }
+    onresize();
+    window.addEventListener('resize', onresize);    
+
 
     canvas.addEventListener("touchstart", function(e) {
-        // Don't react if initial down happens on a form element
+        // Magic
         if (e.touches[0] && e.touches[0].target && e.touches[0].target.tagName.match(/input|textarea|select/i)) {
             return;
         }
@@ -87,6 +92,8 @@ let initScroller = (updateDisplay, setZoom, canvas, document) => {
         scroller.doMouseZoom((e.detail ? (e.detail * -120) : e.wheelDelta) * -config.maxZoom * 1.5, e.timeStamp, e.pageX, e.pageY);
     }, false);
 
+
+    // Handle keyed movement
     window.addEventListener('keydown', () => {
         let DIST = 10, keys = canvas.keys;
         if (keys.ArrowUp || keys.w) {
