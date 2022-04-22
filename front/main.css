@@ -53,9 +53,11 @@ body {
     font-family: arial;
     top: 0px;
     font-size: 40px;
-    top: 7px;
     display: none;
     cursor: not-allowed;
+    padding-top: 7px;
+    padding-bottom: 13px;
+    background-color: rgba(127, 127, 127, 0.3);
 }
 
 canvas {

@@ -21,14 +21,15 @@ window.makeTimelapse = () => {
 
         let $ = (id) => document.getElementById(id);
 
+        console.log()
+
         let x = +$('x').value, y = +$('y').value, 
-        width = Math.min(+$('w').value, historicPalettes[iteration - 1]?.s),
-        height = Math.min(+$('h').value, historicPalettes[iteration - 1]?.s), 
+        width = Math.min(+$('w').value, historicPalettes[iteration - 1]?.s || config.size),
+        height = Math.min(+$('h').value, historicPalettes[iteration - 1]?.s || config.size), 
         speed = +$('speed').value, size = +$('size').value;
 
         let startEpoch = new Date($('start').value).getTime(), endEpoch = new Date($('end').value).getTime();
-
-        let data = Uint8Array.from(Array(width * height * size * size).fill(16))
+        let data = Uint8Array.from(Array(width * height * size * size).fill(config.background))
         let delay = Math.round(100 / framerate.value) * 10;
 
 

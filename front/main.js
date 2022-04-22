@@ -134,10 +134,6 @@ let startCountdown = () => {
     if (time > config.delay * 1000) {
         timer.textContent = "";
         timer.style.display = "none";
-        for(let button of buttons.childNodes) {
-            button.disabled = false;
-        }
-        canvas.disabled = false;
         return;
     }
     timer.textContent = (config.delay - time / 1000).toFixed(2);
@@ -189,10 +185,6 @@ displayCanvas.addEventListener('pointerup', (event) => {
         lastClick = Date.now();
 
         startCountdown();
-        for(let button of buttons.childNodes) {
-            button.disabled = true;
-            displayCanvas.disabled = true;
-        }
         drawRect(x(), y(), drawColor);
         updateDisplay();
         stats[config.iteration - 1][drawColor]++;
