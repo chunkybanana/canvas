@@ -1,6 +1,6 @@
 const config = {
     server: true,
-    local: false,
+    local: false,        // canvas.rto.run vs localhost:8080
     size: 192,
     port: 8080,
     colors: [

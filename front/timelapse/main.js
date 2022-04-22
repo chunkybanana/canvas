@@ -4,8 +4,6 @@ import historicPalettes from './historic.js';
 w.value ||= window.config.size;
 h.value ||= window.config.size;
 
-//let setText = text => document.getElementById('log').innerText = text;
-
 let hextorgb = hex => hex.match(/[0-9a-f]{2}/g).map(x => parseInt(x, 16));
 
 const palette = config.colors.map(hextorgb)
@@ -21,8 +19,6 @@ window.makeTimelapse = () => {
 
         let $ = (id) => document.getElementById(id);
 
-        console.log()
-
         let x = +$('x').value, y = +$('y').value, 
         width = Math.min(+$('w').value, historicPalettes[iteration - 1]?.s || config.size),
         height = Math.min(+$('h').value, historicPalettes[iteration - 1]?.s || config.size), 
@@ -32,7 +28,8 @@ window.makeTimelapse = () => {
         let data = Uint8Array.from(Array(width * height * size * size).fill(config.background))
         let delay = Math.round(100 / framerate.value) * 10;
 
-
+        // Where we draw after a certain point, we want to start at the state at that point
+        // So we need to render the state until that point
         let prolog = log.filter(({time}) => time < startEpoch);
 
 
@@ -43,6 +40,8 @@ window.makeTimelapse = () => {
                 }
             }
         }
+
+        // Then we render the rest of the data, but recording gif frames.
                     
 
         log = log.filter(({X, Y, color, time}) => X >= x && X < x + width && Y >= y && Y < y + height && time >= startEpoch && time <= endEpoch && X === X);
@@ -64,6 +63,7 @@ window.makeTimelapse = () => {
 
         gif.finish();
 
+        // Download
         let blob = new Blob([gif.bytesView()], {type: 'image/gif'});
 
         let a = document.createElement('a');
@@ -73,6 +73,7 @@ window.makeTimelapse = () => {
     })
 }
 
+// A bit messy, will fix at some point
 window.createHeatmap = () => {
     let iteration = document.getElementById('iteration').value;
     fetch(`../log/${iteration}.log`).then(res => res.text()).then(text => {
@@ -95,6 +96,7 @@ window.createHeatmap = () => {
         canvas.height = config.size;
         let ctx = canvas.getContext('2d')
 
+        // Bluish colors with certain saturation values
         for (let y in data) {
             for(let x in data[y]) {
                 ctx.fillStyle = `hsl(240, 50%, ${(100 - Math.log(data[y][x]) * 100 / Math.log(max)).toFixed(2)}%)`;

@@ -12,7 +12,7 @@ let updateStats = (stats) => {
         }
     }
 
-    let sortedColours = Object.entries(colourCounts).sort((a, b) => b[1] - a[1]);
+    let sortedColours = Object.entries(stats.at(-1)).sort((a, b) => b[1] - a[1]);
     let topColours = sortedColours.slice(0, 5);
     
     let topColour = document.getElementById("favorite-colors");
@@ -38,18 +38,21 @@ let updateStats = (stats) => {
 }
 let initStats = () => {
     let stats;
+    // Try grabbing stats from localstorage, if that fails initialize them
     try {
         stats = (JSON.parse(localStorage.getItem("stats")))
     } catch (e) {}
     if (!stats || !stats.length) {
         stats = Array(config.iteration)
     }
+    // Fill empty values
     for(let i = 0; i < config.iteration; i++) {
         stats[i] ||= {};
         for(let color of config.colors) {
             stats[i][color] ??= 0;
         }
     }
+    // Update stats
     stats.update = updateStats.bind(null, stats)
     return stats;
 }
