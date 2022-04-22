@@ -105,3 +105,21 @@ ws.on('connection', (conn) => {
         }
     })
 })
+
+process.on("SIGINT", () => {
+    if (log && typeof log != "function")
+        fs.appendFileSync(log, logs.join("\n") + '\n');
+
+    for (let log of logs) {
+        let [x, y, color] = log.split(" ").map(Number);
+        savedata[y][x] = color;
+    }
+
+    logs = [];
+
+    fs.writeFileSync(backup || "sigint-" + Math.trunc(Math.random() * (2 ** 32)).toString(16).padStart(8, 0) + ".json", JSON.stringify(savedata));
+
+    console.log("Saved logs and backup; o/");
+
+    process.exit();
+});
