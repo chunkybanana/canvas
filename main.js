@@ -60,7 +60,7 @@ ws.on('connection', (conn) => {
             if ('d' in decoded) {
                 if(Date.now() - lastMessage > delay * 1000) {
                     lastMessage = Date.now();
-                    if(!/\d+,\d+,\d+/.test(message.d)) return;
+                    if(!/\d+,\d+,\d+/.test(decoded.d)) return;
                     let {x, y, color} = decodeMessage(decoded.d.toString());
                     if(x < 0 || x >= size || y < 0 || y >= size) return;
                     if(!(color in config.colors)) return;
@@ -122,7 +122,7 @@ process.on("SIGINT", () => {
 
     fs.writeFileSync(backup || "sigint-" + Math.trunc(Math.random() * (2 ** 32)).toString(16).padStart(8, 0) + ".json", JSON.stringify(savedata));
 
-    console.log("Saved logs and backup; o/");
+    console.error("Saved logs and backup; o/");
 
     process.exit();
 });
