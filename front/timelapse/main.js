@@ -36,7 +36,7 @@ window.makeTimelapse = () => {
         for(let {X, Y, color} of prolog) {
             for(let _x = 0; _x < size; _x++) {
                 for(let _y = 0; _y < size; _y++) {
-                    data[(Y * size + _y) * width * size + (X * size + _x)] = color;
+                    data[((Y - y) * size + _y) * width * size + ((X - x) * size + _x)] = color;
                 }
             }
         }
