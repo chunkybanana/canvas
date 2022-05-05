@@ -3,3 +3,4 @@ canvas.json
 screenlog.*
 node_modules
 package-lock.json
+sigint-*.json
