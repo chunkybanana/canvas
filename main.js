@@ -42,6 +42,7 @@ savedata = structuredClone(data);
 let conns = [];
 
 ws.on('connection', (conn) => {
+    let conn_id = [...Array(12)].map(_ => (Math.random() * 16 | 0).toString(16)).join("");
     let lastMessage = 0;
     conn.send(JSON.stringify({
         r: formatData(data),
@@ -66,11 +67,11 @@ ws.on('connection', (conn) => {
                     if(!(color in config.colors)) return;
                     if (log) {
                         if(typeof log == "function") {
-                            log(`${x} ${y} ${color} ${Date.now()} `)
+                            log(`${x} ${y} ${color} ${Date.now()} ${conn_id} `)
 
                             savedata[y][x] = color;
                         } else {
-                            logs.push(`${x} ${y} ${color} ${Date.now()} `);
+                            logs.push(`${x} ${y} ${color} ${Date.now()} ${conn_id} `);
                             if(logs.length >= framesToSave) {
                                 fs.appendFileSync(log, logs.join("\n") + '\n');
                                 // Only update the savedata when updating the data as well
