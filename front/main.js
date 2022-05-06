@@ -224,11 +224,9 @@ var start_ws = () => {
     ws.onmessage = message => {
         JSON.parse(message.data).forEach((data) => {
             if ('d' in data) {
-                for(let msg of data.d.split` `) {
-                    let {x, y, color} = decodeMessage(msg);
-                    drawRect(x, y, COLORS[color]);
-                    updateDisplay();
-                }
+                var {x, y, color} = decodeMessage(data.d);
+                drawRect(x, y, COLORS[color]);
+                updateDisplay();
             }
             if ('s' in data) {
                 playerCount = data.s;
@@ -244,7 +242,9 @@ var start_ws = () => {
                 document.getElementById('loader').style.display = 'none';
                 return;
             }
-        })
+            // Rickroll if too fast
+            if ('e' in data) location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+        });
     }
 
     ws.onclose = () => {

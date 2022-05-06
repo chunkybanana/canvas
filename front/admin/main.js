@@ -1,6 +1,6 @@
 /* This is modified for admin purposes. Among other things*/
 
-import initScroller from '../src/scroller/wrapper.js';
+import initScroller from './wrapper.js';
 import responsiveCanvas from '../src/canvas.js';
 
 const COLORS = config.colors;
@@ -41,7 +41,7 @@ let place = true;
 let lastClick = 0, drawColor = 'black';
 
 
-let playerCount, ws;
+let ws;
 
 let reflow = () => {
     document.getElementById('canvas-container').style.height = `${window.innerHeight - 60}px`;
@@ -118,18 +118,6 @@ for (let color of COLORS) {
 }
 buttons.childNodes[config.defaultSelected].click();
 
-let startCountdown = () => {
-    let time = Date.now() - lastClick;
-    timer.style.display = "block";
-    if (time > config.delay * 1000) {
-        timer.textContent = "";
-        timer.style.display = "none";
-        return;
-    }
-    timer.textContent = (config.delay - time / 1000).toFixed(2);
-    setTimeout(startCountdown, 20);
-}
-
 window.downloadPNG = () => {
     var link = document.createElement('a');
     link.download = `canvas.png`;
@@ -161,8 +149,8 @@ displayCanvas.addEventListener('pointerup', (event) => {
     if (
         // Server handling
         (!config.server || (navigator.onLine && ws.readyState == 1)) &&
-        // Timing and disabling    
-        place && Date.now() - lastClick > config.delay * 1000
+        // disabling    
+        place
         // Within bounds
         && displayCanvas.x < 1024 && displayCanvas.y > 0
         && displayCanvas.y < 1024 && displayCanvas.x > 0
@@ -174,7 +162,6 @@ displayCanvas.addEventListener('pointerup', (event) => {
     ) {
         lastClick = Date.now();
 
-        startCountdown();
         drawRect(x(), y(), drawColor);
         updateDisplay();
         ws.send(JSON.stringify({
@@ -214,15 +201,9 @@ var start_ws = () => {
                 drawRect(x, y, COLORS[color]);
                 updateDisplay();
             }
-            if ('s' in data) {
-                playerCount = data.s;
-                updateCount();
-            }
             if ('r' in data) { // Only in first request
                 render(decodeData(data.r));
                 data = decodeData(data.r)
-                playerCount = data.s;
-                updateCount();
                 document.getElementById('loader').style.display = 'none';
                 return;
             }
