@@ -1,0 +1,179 @@
+@import '../slider.css';
+
+#toolbar {
+    position: absolute; 
+    bottom: 0;
+    left: max(0px, 50vw - 50vh + 30px);
+    width: min(100vw,(100vh - 60px));
+    height: 60px;
+    background-color: #ccc;
+    text-align: center;
+}
+#buttons {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+body {
+    background-color: #ccc;
+}
+#canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    /* ios safari is either ignoring or miscalculating this */
+    /*height: calc(100vh - 60px);*/
+    background-color: #ccc;
+}
+.color-button {
+    /* s/13/(n/2) */
+    width: calc(min(100vw,(100vh - 60px)) / 13);
+    height: 30px;
+    display: inline;
+    margin-left: none;
+    box-sizing: border-box;
+    cursor: pointer;
+    border: none;
+}
+.color-button.active {
+    /* the pxeger's magic. Safari can go frick itself. */
+    box-shadow: 0 3px 0 #888 inset, 3px 0 0 #888 inset, 0 0 3px #888 inset, 0 0 0 3px #888 inset;
+}
+
+*:disabled {
+    opacity: 50%;
+    cursor: not-allowed;
+}
+#timer {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    height: 40px;
+    font-family: arial;
+    top: 0px;
+    font-size: 40px;
+    display: none;
+    cursor: not-allowed;
+    padding-top: 7px;
+    padding-bottom: 13px;
+    background-color: rgba(127, 127, 127, 0.3);
+}
+
+canvas {
+    image-rendering: pixelated;
+    background-color: #ccc;
+}
+
+#info {
+    font-size: 30px;
+    border-radius: 20px;
+    border: 2px solid #555;
+    text-align: center;
+}
+
+.header-bar {
+    height: 30px;
+    display: flex;
+    position: absolute;
+    top: 5px;
+    left: 0px;
+    width: 100vw;
+}
+.icon {
+    color: #555;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    /*background-color: #ccc;*/
+    z-index: 2;
+    margin-left: 5px;
+}
+
+#player-count {
+    color: #555;
+    height: 30px;
+    font-size: 35px;
+    font-family: Arial, Helvetica, sans-serif;
+    z-index: 2;
+    margin-left: 10px;
+    margin-top: -5px;
+}
+
+.modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-box {
+    position: relative;
+    margin-top: 40px;
+    margin-left: calc(20vw + 40px);
+    width: calc(60vw - 80px);
+    height: calc(100vh - 80px);
+    background-color: white;
+    z-index: 3;
+    opacity: 1;    
+}
+
+@media screen and (max-width: 600px) {
+    .modal-box {
+        margin-left: 10px;
+        width: calc(100vw - 20px);
+    }
+}
+
+.close-modal {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    color: #888;
+    text-align: center;
+    font-size: 30px;
+    z-index: 1;
+    cursor: pointer;
+}
+
+.modal-content {
+    font-family: Arial, Helvetica, sans-serif;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+#loader {
+    animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+.switch-text {
+    font-size: 10px;
+    position: absolute;
+    left: 5px;
+    z-index: 2;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#coords {
+    z-index: 1;
+    color: #555;
+    font-size: 15px;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    margin-top: 5px;
+    margin-left: 5px;
+}

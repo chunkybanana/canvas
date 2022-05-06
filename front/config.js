@@ -1,6 +1,6 @@
 const config = {
     server: true,
-    local: false,        // canvas.rto.run vs localhost:8080
+    local: true,        // canvas.rto.run vs localhost:8080
     size: 192,
     port: 8080,
     colors: [
@@ -8,7 +8,7 @@ const config = {
         "#1ebe72","#1aae00","#40e0d0","#1e90ff","#0800ff","#86019a","#86334d",
         "#ee46ee","#fd9aff","#efc0cb","#6a3d18","#a16932","#fbdcbc","#00408d",
         "#4466a1","#7289da","#000000","#555555","#cccccc","#ffffff",],
-    delay: 2,            // Delay between clicks, in seconds
+    delay: 0,            // Delay between clicks, in seconds
     iteration: 3,
     maxZoom: 20,         // Increase when adjusting canvas size
     framesToSave: 100,   // Amount of changes before saving logs / backing up state

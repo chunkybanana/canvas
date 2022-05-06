@@ -1,15 +1,7 @@
-/* Most of the code below is written in ES6 modules
- * But some (specifically, data processing and config) can't be 
- * for node.js compatibility
- * Hence, this has ended up as a cursed mixture of the two 
- * that I can't and won't fix.
- */
+/* This is modified for admin purposes. Among other things*/
 
-import initScroller from './src/scroller/wrapper.js';
-import initStats from './src/stats.js';
-import responsiveCanvas from './src/canvas.js';
-
-let stats = initStats();
+import initScroller from '../src/scroller/wrapper.js';
+import responsiveCanvas from '../src/canvas.js';
 
 const COLORS = config.colors;
 const SIZE = config.size;
@@ -32,8 +24,6 @@ ctx.fillStyle = "white";
 ctx.fillRect(0, 0, SIZE, SIZE);
 
 window.showModal = (elem, bool) => (typeof elem == "string" ? document.getElementById(elem) : elem).style.display = bool ? "block" : "none";
-
-window.updateStats = stats.update;
 
 // For checking whether the mouse has moved
 let dx = 0, dy = 0
@@ -187,8 +177,6 @@ displayCanvas.addEventListener('pointerup', (event) => {
         startCountdown();
         drawRect(x(), y(), drawColor);
         updateDisplay();
-        stats[config.iteration - 1][drawColor]++;
-        stats.update();
         ws.send(JSON.stringify({
             d: formatMessage(x(), y(), COLORS.indexOf(drawColor)).toString()
         }));
@@ -215,20 +203,16 @@ toggle.addEventListener('click', () => {
     place = !place
 })
 
-let updateCount = () => document.getElementById('player-count').innerText = playerCount;
-
 var start_ws = () => {
     ws = new WebSocket(config.local ? "ws://localhost:8080" : "wss://canvas.rto.run/ws");
     ws.onopen = () => {}
 
     ws.onmessage = message => {
-        JSON.parse(message.data).forEach((data) => {
+        ((data) => {
             if ('d' in data) {
-                for(let msg of data.d.split` `) {
-                    let {x, y, color} = decodeMessage(msg);
-                    drawRect(x, y, COLORS[color]);
-                    updateDisplay();
-                }
+                var {x, y, color} = decodeMessage(data.d);
+                drawRect(x, y, COLORS[color]);
+                updateDisplay();
             }
             if ('s' in data) {
                 playerCount = data.s;
@@ -239,17 +223,15 @@ var start_ws = () => {
                 data = decodeData(data.r)
                 playerCount = data.s;
                 updateCount();
-                document.getElementById('player-icon').style.display = 'block';
-                document.getElementById('player-count').style.display = 'block';
                 document.getElementById('loader').style.display = 'none';
                 return;
             }
-        })
+            // Rickroll if too fast
+            if ('e' in data) location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+        })(JSON.parse(message.data));
     }
 
     ws.onclose = () => {
-        document.getElementById('player-icon').style.display = 'none';
-        document.getElementById('player-count').style.display = 'none';
         document.getElementById('loader').style.display = 'block';
         setTimeout(start_ws, 2000);
     }
@@ -264,7 +246,5 @@ if (config.server) {
     ws = {
         send(){}
     }
-    document.getElementById('player-icon').style.display = 'block';
-    document.getElementById('player-count').style.display = 'block';
     document.getElementById('loader').style.display = 'none';
 }

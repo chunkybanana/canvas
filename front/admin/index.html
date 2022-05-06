@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin tools</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="favicon.ico">
+</head>
+<body>
+    <div id="main-editor" style="width: 100vw; height: 100vh; padding: 0px; position: absolute; top: 0px; left: 0px">
+        <div class="header-bar">
+            <!--stats, download, timelapse link among others are no longer necessary-->
+            <div id="info" class="icon" onclick="window.showModal('info-modal', true)">?</div>
+            <div class="icon" id="loader">
+                <svg width="30" height="30">
+                    <path d="M 15 5 A 10 10 1 1 15 15 M 25 15" stroke="#555" style="stroke-width: 5px;" fill="none"/>
+                </svg>
+            </div>
+            <div style="position: relative">
+                <span class="switch-text">Placing</span>
+                <label class="switch" title="placing">
+                    <input type="checkbox" id="toggle" autocomplete checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <span id="coords">(0,0)</span>
+        </div>
+        <div id="canvas-container"></div>
+        <div id="toolbar">
+            <div id="buttons"></div>
+            <div id="timer"></div>
+        </div>
+        <div class="modal" id="info-modal" onclick="if(event.target === this) window.showModal(this, false)">
+            <div class="modal-box">
+                <div class="close-modal" onclick="window.showModal('info-modal', false)">&times;</div>
+                <div class="modal-content">
+                    Welcome to the admin tools editor. If you're here, understand that these tools must be used responsibly.
+
+                    Keyboard controls:
+    
+                    <ul>
+                        <li>Arrow keys / WASD - move</li>
+                        <li>Z/X - Zoom</li>
+                        <li>C - toggle placing</li>
+                        <li>Hold shift to drag+place</li>
+                        <li>Press R / select the rectangle on the header bar to draw a solid rectangle</li>
+                    </ul>
+    
+                    Scroll to zoom, click and drag to move.
+                </div>
+            </div>
+        </div>
+        
+        <script src="../config.js"></script>
+        <script src="../data-utils.js"></script>
+        <script type="module" src="main.js"></script>
+    </div>
+</body>
+</html>

@@ -39,21 +39,32 @@ data ||= Array(size).fill(0).map(() => Array(size).fill(background))
 
 savedata = structuredClone(data);
 
-let conns = [];
+let conns = [], ticks = [];
 
-ws.on('connection', (conn) => {
+setInterval(() => {
+    if (ticks.length)
+    for (let conn of conns) {
+        let otherticks = ticks
+            .filter(([tick, con]) => con !== conn)
+            .map(([tick]) => tick)
+        let msg = JSON.stringify(otherticks);
+        if (otherticks.length) conn.send(msg);
+    }
+    ticks = [];
+}, 1000)
+
+ws.on('connection', (conn, req) => {
     let conn_id = [...Array(12)].map(_ => (Math.random() * 16 | 0).toString(16)).join("");
     let lastMessage = 0;
-    conn.send(JSON.stringify({
+    conn.send(JSON.stringify([{
         r: formatData(data),
         s: conns.length + 1
-    }));
+    }]));
+    conn.ip = req.socket.remoteAddress
     conns.push(conn);
-    for (let _conn of conns) {
-        _conn.send(JSON.stringify({
-            s: conns.length
-        }));
-    }
+    ticks.push([{
+        s: conns.length
+    }, null]);
     conn.on('message', (message) => {
         let decoded;
         try {
@@ -61,6 +72,7 @@ ws.on('connection', (conn) => {
             if ('d' in decoded) {
                 if(Date.now() - lastMessage > delay * 1000) {
                     lastMessage = Date.now();
+                    // Apparently there was a bug here and I don't know how well it's been fixed.
                     if(!/\d+,\d+,\d+/.test(decoded.d)) return;
                     let {x, y, color} = decodeMessage(decoded.d.toString());
                     if(x < 0 || x >= size || y < 0 || y >= size) return;
@@ -96,19 +108,15 @@ ws.on('connection', (conn) => {
         } catch(e) {
             console.error(e)
         }
-        // Eventually we should turn this into a tick-based event loop
-        // But for now, just propagate it.
-        for (let _conn of conns) {
-            if (_conn != conn) _conn.send(message.toString());
-        }
+
+        // sent every 100ms
+        ticks.push([JSON.parse(message.toString()), conn])
     })
     conn.on('close', () => {
         conns.splice(conns.indexOf(conn), 1);
-        for (let _conn of conns) {
-            _conn.send(JSON.stringify({
-                s: conns.length
-            }));
-        }
+        ticks.push([{
+            s: conns.length
+        }, null]);
     })
 })
 
