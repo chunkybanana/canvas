@@ -145,6 +145,34 @@ displayCanvas.addEventListener('pointerdown', (event) => {
     dy = event.clientY;
 })
 
+displayCanvas.addEventListener('pointermove', (event) => {
+
+    console.log(displayCanvas.clicked, displayCanvas.modKeys.shift)
+    if (
+        // Server handling
+        (!config.server || (navigator.onLine && ws.readyState == 1)) &&
+        // disabling    
+        place
+        // Within bounds
+        && displayCanvas.x < 1024 && displayCanvas.y > 0
+        && displayCanvas.y < 1024 && displayCanvas.x > 0
+        // Not redrawing
+        && data[y()][x()] != COLORS.indexOf(drawColor) 
+        && displayCanvas.clicked && displayCanvas.modKeys.shift
+    ) {
+        lastClick = Date.now();
+
+        drawRect(x(), y(), drawColor);
+        updateDisplay();
+        // For this, we want to send actions in bundlees
+        // So as to not overload the  server
+        // Time to reinvent TLS
+        ws.send(JSON.stringify({
+            d: formatMessage(x(), y(), COLORS.indexOf(drawColor)).toString()
+        }));
+    }
+})
+
 displayCanvas.addEventListener('pointerup', (event) => {
     if (
         // Server handling

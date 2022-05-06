@@ -43,7 +43,7 @@ export default function responsiveCanvas(width, height, container) {
     window.addEventListener('pointerdown', getData);
     window.addEventListener('pointermove', getData);
     window.addEventListener('pointerup', function (event) {
-        canvas.clicked = null;
+        canvas.clicked = false; // why tf was this null?
     });
     window.addEventListener('keydown', function (event) {
         canvas.keys[event.key] = true;
