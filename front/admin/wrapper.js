@@ -67,7 +67,7 @@ let initScroller = (updateDisplay, setZoom, canvas, document) => {
     }, false);
 
     document.addEventListener("mousemove", function(e) {
-        if (!mousedown) {
+        if (!mousedown || canvas.modKeys.shift) {
             return;
         }
         

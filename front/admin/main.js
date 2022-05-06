@@ -195,7 +195,7 @@ var start_ws = () => {
     ws.onopen = () => {}
 
     ws.onmessage = message => {
-        ((data) => {
+        JSON.parse(message.data).forEach((data) => {
             if ('d' in data) {
                 var {x, y, color} = decodeMessage(data.d);
                 drawRect(x, y, COLORS[color]);
@@ -207,9 +207,7 @@ var start_ws = () => {
                 document.getElementById('loader').style.display = 'none';
                 return;
             }
-            // Rickroll if too fast
-            if ('e' in data) location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-        })(JSON.parse(message.data));
+        });
     }
 
     ws.onclose = () => {
