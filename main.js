@@ -53,6 +53,15 @@ setInterval(() => {
     ticks = [];
 }, 1000)
 
+let constantTimeCompare = (a, b) => {
+    if (a.length !== b.length) return false;
+    let diff = 0;
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) diff++;
+    }
+    return diff === 0;
+}
+
 ws.on('connection', (conn, req) => {
     let conn_id = [...Array(12)].map(_ => (Math.random() * 16 | 0).toString(16)).join("");
     let lastMessage = 0;

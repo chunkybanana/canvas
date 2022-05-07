@@ -5,3 +5,4 @@ node_modules
 package-lock.json
 front/log/*.log
 sigint-*.json
+passwords.txt
