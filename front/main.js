@@ -217,8 +217,16 @@ toggle.addEventListener('click', () => {
 
 let updateCount = () => document.getElementById('player-count').innerText = playerCount;
 
+let id2 = window.localStorage.getItem("id2");
+
+if (!id2) {
+    id2 = [...Array(8)].map(_ => (Math.random() * 20 + 16 | 0).toString(36)).join("");
+
+    window.localStorage.setItem("id2", id2);
+}
+
 var start_ws = () => {
-    ws = new WebSocket(config.local ? "ws://localhost:8080" : "wss://canvas.rto.run/ws");
+    ws = new WebSocket((config.local ? "ws://localhost:8080" : "wss://canvas.rto.run/ws") + "?id2=" + id2);
     ws.onopen = () => {}
 
     ws.onmessage = message => {

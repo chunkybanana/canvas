@@ -1,4 +1,5 @@
 let r_ws = require("ws");
+let url = require("url");
 const { program } = require('commander');
 const fs = require('fs')
 var {formatData, decodeMessage} = require("./front/data-utils");
@@ -41,8 +42,11 @@ savedata = structuredClone(data);
 
 let conns = [];
 
-ws.on('connection', (conn) => {
+ws.on('connection', (conn, request) => {
     let conn_id = [...Array(12)].map(_ => (Math.random() * 16 | 0).toString(16)).join("");
+    let query = (url.parse(request.url).query || "").split("&").map(x => x.split("="));
+    if (!query.find(x => x[0] == "id2")) return;
+    console.error(conn_id + " " + query.find(x => x[0] == "id2")[1] + " " + request.headers['x-forwarded-for']);
     let lastMessage = 0;
     conn.send(JSON.stringify({
         r: formatData(data),
