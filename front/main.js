@@ -226,7 +226,7 @@ if (!id2) {
 }
 
 var start_ws = () => {
-    ws = new WebSocket((config.local ? "ws://localhost:8080" : "wss://canvas.rto.run/ws") + "?id2=" + id2);
+    ws = new WebSocket((config.local ? "ws://localhost:8080" : `wss://${config.domain}/ws`) + "?id2=" + id2);
     ws.onopen = () => {}
 
     ws.onmessage = message => {

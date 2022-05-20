@@ -36,7 +36,15 @@ program.parse();
 
 var ws = new r_ws.Server({ port });
 
-data ||= Array(size).fill(0).map(() => Array(size).fill(background)) 
+if (typeof background == 'function') {
+    data ||= Array(size).fill(0).map(
+        (_, y) => Array(size).fill(0).map(
+            (_, x) => background(x, y)))
+} else {
+    data ||= Array(size).fill(0).map(() => Array(size).fill(background)) 
+}
+
+
 
 savedata = structuredClone(data);
 
