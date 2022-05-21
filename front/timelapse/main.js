@@ -3,6 +3,7 @@ import historicPalettes from './historic.js';
 
 w.value ||= window.config.size;
 h.value ||= window.config.size;
+iteration.value = window.config.iteration;
 
 let hextorgb = hex => hex.match(/[0-9a-f]{2}/g).map(x => parseInt(x, 16));
 
