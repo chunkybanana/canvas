@@ -9,7 +9,7 @@ const config = {
         "#ee46ee","#fd9aff","#efc0cb","#6a3d18","#a16932","#fbdcbc","#00408d",
         "#4466a1","#7289da","#000000","#555555","#cccccc","#ffffff",],
     delay: 2,            // Delay between clicks, in seconds
-    iteration: 3,
+    iteration: 4,
     maxZoom: 20,         // Increase when adjusting canvas size
     framesToSave: 100,   // Amount of changes before saving logs / backing up state
     defaultSelected: 22, // Indices in palette
@@ -20,7 +20,7 @@ const config = {
             (tx * 4 + ty + 72) % 9
         ]
     },
-    domain: "canvas-2.rto.run"
+    domain: "canvas.rto.run"
 }
 
 globalThis.config = config;
