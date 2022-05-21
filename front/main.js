@@ -182,7 +182,7 @@ displayCanvas.addEventListener('pointerup', (event) => {
         // Not redrawing
         && data[y()][x()] != COLORS.indexOf(drawColor)
 		// Actually a left click
-		&& event.isPrimary
+		&& event.button == 0
     ) {
         lastClick = Date.now();
 
