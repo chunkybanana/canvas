@@ -22,10 +22,19 @@ window.makeTimelapse = () => {
         let x = +$('x').value, y = +$('y').value, 
         width = Math.min(+$('w').value, historicPalettes[iteration - 1]?.s || config.size),
         height = Math.min(+$('h').value, historicPalettes[iteration - 1]?.s || config.size), 
+        background = historicPalettes[iteration - 1]?.b || config.background,
         speed = +$('speed').value, size = +$('size').value;
 
         let startEpoch = new Date($('start').value).getTime(), endEpoch = new Date($('end').value).getTime();
-        let data = Uint8Array.from(Array(width * height * size * size).fill(config.background))
+        let data;
+
+        if (typeof background === 'function') {
+            console.log('data')
+            data = Uint8Array.from(Array(height * size).fill(0).flatMap((_, x) => Array(width * size).fill(0).map((_, y) => background(x / size | 0, y / size | 0))));
+            console.log('dataa')
+        } else {
+            data = Uint8Array.from(Array(width * height * size * size).fill(background))
+        }
         let delay = Math.round(100 / framerate.value) * 10;
 
         // Where we draw after a certain point, we want to start at the state at that point

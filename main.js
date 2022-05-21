@@ -9,7 +9,7 @@ let log, logs = [], data, savedata, backup;
 
 program
     .option('-l, --log <file>', 'log file')
-    .option('-b, --backup <file>', 'backup the canvas state to a file every minute')
+    .option('-b, --backup <file>', 'backup the canvas state to a file every time the log is saved')
     .option('-L, --load <file>', 'load the canvas state from a file')
     .option('-p, --port <port>','Websocket port', port)
     .option('-s, --stdout', 'log to stdout')
@@ -71,7 +71,7 @@ ws.on('connection', (conn, request) => {
         try {
             decoded = JSON.parse(message)
             if ('d' in decoded) {
-                if(Date.now() - lastMessage > delay * 1000) {
+                if(Date.now() - lastMessage > delay * 750) {
                     lastMessage = Date.now();
                     if(!/\d+,\d+,\d+/.test(decoded.d)) return;
                     let {x, y, color} = decodeMessage(decoded.d.toString());
